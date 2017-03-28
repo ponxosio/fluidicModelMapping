@@ -1,5 +1,5 @@
-COPY %1\FluidicMachineModel.dll X:\fluidicMachineModel\dll_%2\bin\FluidicMachineModel.dll
-COPY %1\FluidicMachineModel.lib X:\fluidicMachineModel\dll_%2\bin\FluidicMachineModel.lib
+COPY %1\FluidicModelMapping.dll X:\fluidicModelMapping\dll_%2\bin\FluidicModelMapping.dll
+COPY %1\FluidicModelMapping.lib X:\fluidicModelMapping\dll_%2\bin\FluidicModelMapping.lib
 
-DEL /S X:\fluidicMachineModel\dll_%2\include\*.h
-XCOPY /S /Y X:\fluidicMachineModel\FluidicMachineModel\*.h X:\fluidicMachineModel\dll_%2\include
+DEL /S X:\fluidicModelMapping\dll_%2\include\*.h
+XCOPY /S /Y X:\fluidicModelMapping\fluidicModelMapping\*.h X:\fluidicModelMapping\dll_%2\include

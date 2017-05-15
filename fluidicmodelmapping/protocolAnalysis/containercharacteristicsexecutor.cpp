@@ -27,6 +27,10 @@ void ContainerCharacteristicsExecutor::stir(const std::string & idSource, units:
     cCh.addFunctions(mask);
 }
 
+void ContainerCharacteristicsExecutor::centrifugate(const std::string & idSource, units::Frequency intensity) {
+
+}
+
 units::Volume ContainerCharacteristicsExecutor::getVirtualVolume(const std::string & sourceId) {
     getContainerCharacteristics(sourceId);
     return -1 * units::ml;

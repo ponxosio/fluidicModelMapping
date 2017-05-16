@@ -21,12 +21,16 @@ HEADERS += \
     fluidicmodelmapping/fluidicmodelmapping.h \
     fluidicmodelmapping/fluidicmachineconnectiontable.h \
     fluidicmodelmapping/heuristic/heuristicinterface.h \
-    fluidicmodelmapping/heuristic/topographyheuristic.h \
-    fluidicmodelmapping/heuristic/deepsearch.h \
     fluidicmodelmapping/protocolAnalysis/analysisexecutor.h \
     fluidicmodelmapping/protocolAnalysis/containercharacteristicsexecutor.h \
     fluidicmodelmapping/heuristic/containercharacteristics.h \
-    fluidicmodelmapping/protocolAnalysis/machineflowstringadapter.h
+    fluidicmodelmapping/protocolAnalysis/machineflowstringadapter.h \
+    fluidicmodelmapping/searchalgorithms/deepsearch.h \
+    fluidicmodelmapping/searchalgorithms/searchnode.h \
+    fluidicmodelmapping/heuristic/topologyheuristic.h \
+    fluidicmodelmapping/searchalgorithms/astarsearch.h \
+    fluidicmodelmapping/searchalgorithms/searchinterface.h \
+    fluidicmodelmapping/searchalgorithms/solutioncheck.h
 
 debug {
     QMAKE_POST_LINK=X:\fluidicModelMapping\fluidicModelMapping\setDLL.bat $$shell_path($$OUT_PWD/debug) debug
@@ -61,6 +65,7 @@ debug {
 }
 
 INCLUDEPATH += X:\libraries\cereal-1.2.2\include
+INCLUDEPATH += X:\libraries\eigen.3.3
 
 INCLUDEPATH += X:\swipl\include
 LIBS += -L$$quote(X:\swipl\bin) -llibswipl
@@ -69,9 +74,12 @@ LIBS += -L$$quote(X:\swipl\lib) -llibswipl
 SOURCES += \
     fluidicmodelmapping/fluidicmodelmapping.cpp \
     fluidicmodelmapping/fluidicmachineconnectiontable.cpp \
-    fluidicmodelmapping/heuristic/topographyheuristic.cpp \
-    fluidicmodelmapping/heuristic/deepsearch.cpp \
     fluidicmodelmapping/protocolAnalysis/analysisexecutor.cpp \
     fluidicmodelmapping/protocolAnalysis/containercharacteristicsexecutor.cpp \
     fluidicmodelmapping/heuristic/containercharacteristics.cpp \
-    fluidicmodelmapping/protocolAnalysis/machineflowstringadapter.cpp
+    fluidicmodelmapping/protocolAnalysis/machineflowstringadapter.cpp \
+    fluidicmodelmapping/searchalgorithms/deepsearch.cpp \
+    fluidicmodelmapping/heuristic/topologyheuristic.cpp \
+    fluidicmodelmapping/searchalgorithms/searchnode.cpp \
+    fluidicmodelmapping/searchalgorithms/astarsearch.cpp \
+    fluidicmodelmapping/searchalgorithms/solutioncheck.cpp

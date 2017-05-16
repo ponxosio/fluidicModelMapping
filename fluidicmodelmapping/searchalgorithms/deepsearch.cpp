@@ -3,7 +3,7 @@
 DeepSearch::DeepSearch(FluidicMachineModel* modelPtr,
                        const std::vector<ContainerCharacteristics> & virtualContainers,
                        const std::vector<MachineFlow::FlowsVector> & flowsInTime) :
-    virtualContainerVector(virtualContainers), flowsInTime(flowsInTime)
+    SearchInterface(), virtualContainerVector(virtualContainers), flowsInTime(flowsInTime)
 {
     this->modelPtr = modelPtr;
     fillRelationTable(virtualContainers);
@@ -77,11 +77,13 @@ std::vector<int> DeepSearch::availableNodes(const ContainerCharacteristics & con
     }
 }
 
-std::vector<int> DeepSearch::filterFunction(unsigned long functionsMask, const std::unordered_set<int> & containerSet) {
+std::vector<int> DeepSearch::filterFunction(const ContainerCharacteristics::FunctionsBitSet & functionsMask,
+                                            const std::unordered_set<int> & containerSet)
+{
     std::vector<int> compatibleIds;
     for(int id : containerSet) {
         if ((alreadyMappedIds.find(id) == alreadyMappedIds.end()) &&
-            (modelPtr->getComponent(id)->canDoOperations(functionsMask)))
+            (modelPtr->getComponent(id)->canDoOperations(functionsMask.to_ulong())))
         {
             compatibleIds.push_back(id);
         }

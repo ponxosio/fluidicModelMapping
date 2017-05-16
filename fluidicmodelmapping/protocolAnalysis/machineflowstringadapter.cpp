@@ -35,7 +35,7 @@ const MachineFlowStringAdapter::FlowsVector & MachineFlowStringAdapter::updateFl
     return actualFlows;
 }
 
-std::string MachineFlowStringAdapter::flowToStr() {
+std::string MachineFlowStringAdapter::flowToStr() const {
     std::stringstream stream;
 
     stream << "[";

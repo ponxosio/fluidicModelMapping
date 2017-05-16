@@ -4,6 +4,8 @@ ContainerCharacteristics::ContainerCharacteristics() {
     containerName = "Unknow";
     this->neccesaryFunctionsMask = 0;
     this->type = ContainerNode::unknow;
+    this->arrivingConnections = 0;
+    this->leavingConnections = 0;
 }
 
 ContainerCharacteristics::ContainerCharacteristics(const std::string & virtualContainerName) :
@@ -11,27 +13,25 @@ ContainerCharacteristics::ContainerCharacteristics(const std::string & virtualCo
 {
     this->neccesaryFunctionsMask = 0;
     this->type = ContainerNode::unknow;
+    this->arrivingConnections = 0;
+    this->leavingConnections = 0;
 }
 
 ContainerCharacteristics::~ContainerCharacteristics() {
 
 }
 
-void ContainerCharacteristics::addMustConnectVector(const std::vector<std::string> & container2connect) {
-    mustConnectToVector.push_back(std::vector<std::string>(container2connect));
+bool ContainerCharacteristics::compatible(const ContainerCharacteristics & containerChar) const {
+    return (this->type == containerChar.type) &&
+           ((this->neccesaryFunctionsMask & containerChar.neccesaryFunctionsMask) == containerChar.neccesaryFunctionsMask) &&
+           ((this->arrivingConnections + this->leavingConnections) >= (containerChar.arrivingConnections + containerChar.leavingConnections));
 }
 
-void ContainerCharacteristics::copyConnectionVector(const ConnectionVector & connectionVector) {
-    mustConnectToVector.clear();
-    mustConnectToVector.reserve(connectionVector.size());
+void ContainerCharacteristics::addFunctions(Function::OperationType op) {
+    int pos = (int) op;
+    neccesaryFunctionsMask[pos] = 1;
+}
 
-    for(int i = 0; i < mustConnectToVector.size(); i++) {
-        std::vector<std::string> elementCopys;
-        elementCopys.reserve(connectionVector[i].size());
-        for(int j=0; j < connectionVector[i].size(); j++) {
-            std::string actualEcopy(connectionVector[i][j]);
-            elementCopys.insert(elementCopys.begin() + j, actualEcopy);
-        }
-        mustConnectToVector.insert(mustConnectToVector.begin() + i, elementCopys);
-    }
+void ContainerCharacteristics::addFunctions(const FunctionsBitSet & functions) {
+    neccesaryFunctionsMask |= functions;
 }

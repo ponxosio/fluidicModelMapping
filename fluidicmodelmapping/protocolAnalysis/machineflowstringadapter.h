@@ -28,7 +28,7 @@ public:
     void removeFlow(const std::string & idSource, const std::string & idTarget);
     const FlowsVector & updateFlows();
 
-    std::string flowToStr();
+    std::string flowToStr() const;
 
     inline void clear() {
         machineFlow.clear();
@@ -44,6 +44,7 @@ protected:
     const std::string & getConvertedId(int id);
 
     PathRateTuple translatePathTuple(const MachineFlow::PathRateTuple & intTuple);
+    MachineFlow::PathRateTuple translatePathTuple(const PathRateTuple & strTuple);
 };
 
 #endif // MACHINEFLOWADAPTER_H

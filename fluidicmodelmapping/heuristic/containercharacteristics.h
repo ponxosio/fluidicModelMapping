@@ -6,31 +6,53 @@
 #include <vector>
 
 #include <commonmodel/functions/functionset.h>
+#include <commonmodel/functions/function.h>
 #include <fluidicmachinemodel/fluidicnode/containernode.h>
 
-class ContainerCharacteristics
+#include "fluidicmodelmapping/fluidicmodelmapping_global.h"
+
+class CONTAINERCHARACTERISTICS_EXPORT ContainerCharacteristics
 {
 public:
-    typedef std::vector<std::vector<std::string>> ConnectionVector;
+    typedef std::bitset<Function::MAX_OPTYPE> FunctionsBitSet;
+
+    typedef struct _ContainerCharacteristicsComparator {
+        bool operator()(const ContainerCharacteristics & x, const ContainerCharacteristics & y) const throw () {
+            int opsX = x.neccesaryFunctionsMask.count();
+            int opsY = y.neccesaryFunctionsMask.count();
+            if ( opsX == opsY) {
+                return (x.arrivingConnections + x.leavingConnections) > (y.arrivingConnections + y.leavingConnections);
+            } else {
+                return opsX > opsY;
+            }
+        }
+    } ContainerCharacteristicsComparator;
 
     ContainerCharacteristics();
     ContainerCharacteristics(const std::string & virtualContainerName);
     virtual ~ContainerCharacteristics();
 
-    void addMustConnectVector(const std::vector<std::string> & container2connect);
+    bool compatible(const ContainerCharacteristics & containerChar) const;
+    void addFunctions(Function::OperationType op);
+    void addFunctions(const FunctionsBitSet & functions);
 
     inline void setType(ContainerNode::ContainerType type) {
         this->type = type;
     }
-    inline void addFunctions(unsigned long mask) {
-        this->neccesaryFunctionsMask = neccesaryFunctionsMask | mask;
+
+    inline void setArrivingConnections(unsigned int numberConnections) {
+        this->arrivingConnections = numberConnections;
+    }
+
+    inline void setLeavingConnections(unsigned int numberConnections) {
+        this->leavingConnections = numberConnections;
     }
 
     inline const std::string & getName() const {
         return containerName;
     }
 
-    inline unsigned long getNeccesaryFunctionsMask() const {
+    inline const FunctionsBitSet & getNeccesaryFunctionsMask() const {
         return neccesaryFunctionsMask;
     }
 
@@ -38,17 +60,22 @@ public:
         return type;
     }
 
-    inline const ConnectionVector & getMustConnectVector() const {
-        return mustConnectToVector;
+    inline unsigned int getArrivingConnections() const {
+        return arrivingConnections;
+    }
+
+    inline unsigned int getLeavingConnections() const {
+        return leavingConnections;
     }
 
 protected:
+    unsigned int arrivingConnections;
+    unsigned int leavingConnections;
     std::string containerName;
-    unsigned long neccesaryFunctionsMask;
+    FunctionsBitSet neccesaryFunctionsMask;
     ContainerNode::ContainerType type;
-    ConnectionVector mustConnectToVector;
 
-    void copyConnectionVector(const ConnectionVector & connectionVector);
+
 };
 
 #endif // CONTAINERCHARACTERISTICS_H

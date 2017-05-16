@@ -30,7 +30,8 @@ HEADERS += \
     fluidicmodelmapping/heuristic/topologyheuristic.h \
     fluidicmodelmapping/searchalgorithms/astarsearch.h \
     fluidicmodelmapping/searchalgorithms/searchinterface.h \
-    fluidicmodelmapping/searchalgorithms/solutioncheck.h
+    fluidicmodelmapping/searchalgorithms/solutioncheck.h \
+    fluidicmodelmapping/protocolAnalysis/workingrangemanager.h
 
 debug {
     QMAKE_POST_LINK=X:\fluidicModelMapping\fluidicModelMapping\setDLL.bat $$shell_path($$OUT_PWD/debug) debug
@@ -82,4 +83,5 @@ SOURCES += \
     fluidicmodelmapping/heuristic/topologyheuristic.cpp \
     fluidicmodelmapping/searchalgorithms/searchnode.cpp \
     fluidicmodelmapping/searchalgorithms/astarsearch.cpp \
-    fluidicmodelmapping/searchalgorithms/solutioncheck.cpp
+    fluidicmodelmapping/searchalgorithms/solutioncheck.cpp \
+    fluidicmodelmapping/protocolAnalysis/workingrangemanager.cpp

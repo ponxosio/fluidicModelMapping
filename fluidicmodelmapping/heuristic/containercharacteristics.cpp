@@ -24,6 +24,7 @@ ContainerCharacteristics::~ContainerCharacteristics() {
 bool ContainerCharacteristics::compatible(const ContainerCharacteristics & containerChar) const {
     return (this->type == containerChar.type) &&
            ((this->neccesaryFunctionsMask & containerChar.neccesaryFunctionsMask) == containerChar.neccesaryFunctionsMask) &&
+           (areWorkingRangeMapsCompatible(containerChar.workingRangeMap)) &&
            ((this->arrivingConnections + this->leavingConnections) >= (containerChar.arrivingConnections + containerChar.leavingConnections));
 }
 
@@ -34,4 +35,32 @@ void ContainerCharacteristics::addFunctions(Function::OperationType op) {
 
 void ContainerCharacteristics::addFunctions(const FunctionsBitSet & functions) {
     neccesaryFunctionsMask |= functions;
+}
+
+void ContainerCharacteristics::addWorkingRange(Function::OperationType op, const std::shared_ptr<const ComparableRangeInterface> workingRange)
+    throw(std::invalid_argument)
+{
+    auto finded = workingRangeMap.find(op);
+    if (finded != workingRangeMap.end()) {
+        throw(std::invalid_argument("ContainerCharacteristics::addWorkingRange. " + std::to_string((int) op) + " op has alreadya  range set"));
+    } else {
+        workingRangeMap.insert(std::make_pair(op, workingRange));
+    }
+}
+
+bool ContainerCharacteristics::areWorkingRangeMapsCompatible(const WorkingRangeMap & othermap) const {
+    bool compatible = true;
+    for(auto it = workingRangeMap.begin(); (compatible && (it != workingRangeMap.end())); ++it) {
+        Function::OperationType actualType = it->first;
+
+        auto finded = othermap.find(actualType);
+        if (finded != othermap.end()) {
+            const std::shared_ptr<const ComparableRangeInterface> myWorkingRange = it->second;
+            const std::shared_ptr<const ComparableRangeInterface> otherWorkingRange = finded->second;
+            compatible = myWorkingRange->compatible(otherWorkingRange);
+        } else {
+            compatible = false;
+        }
+    }
+    return compatible;
 }

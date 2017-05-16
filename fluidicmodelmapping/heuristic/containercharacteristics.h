@@ -4,15 +4,20 @@
 #include <bitset>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include <commonmodel/functions/functionset.h>
 #include <commonmodel/functions/function.h>
+#include <commonmodel/functions/ranges/comparablerangeinterface.h>
+
 #include <fluidicmachinemodel/fluidicnode/containernode.h>
 
 #include "fluidicmodelmapping/fluidicmodelmapping_global.h"
 
 class CONTAINERCHARACTERISTICS_EXPORT ContainerCharacteristics
 {
+    typedef std::unordered_map<Function::OperationType, const std::shared_ptr<const ComparableRangeInterface>, Function::OperationTypeHash> WorkingRangeMap;
+
 public:
     typedef std::bitset<Function::MAX_OPTYPE> FunctionsBitSet;
 
@@ -35,6 +40,8 @@ public:
     bool compatible(const ContainerCharacteristics & containerChar) const;
     void addFunctions(Function::OperationType op);
     void addFunctions(const FunctionsBitSet & functions);
+
+    void addWorkingRange(Function::OperationType op, const std::shared_ptr<const ComparableRangeInterface> workingRange) throw(std::invalid_argument);
 
     inline void setType(ContainerNode::ContainerType type) {
         this->type = type;
@@ -69,13 +76,16 @@ public:
     }
 
 protected:
+    std::string containerName;
+
     unsigned int arrivingConnections;
     unsigned int leavingConnections;
-    std::string containerName;
+
     FunctionsBitSet neccesaryFunctionsMask;
     ContainerNode::ContainerType type;
+    WorkingRangeMap workingRangeMap;
 
-
+    bool areWorkingRangeMapsCompatible(const WorkingRangeMap & othermap) const;
 };
 
 #endif // CONTAINERCHARACTERISTICS_H

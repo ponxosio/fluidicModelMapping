@@ -58,7 +58,15 @@ void TopologyHeuristic::analyzeMachine(std::shared_ptr<const MachineGraph> machi
 ContainerCharacteristics TopologyHeuristic::analyzeContainer(const std::shared_ptr<ContainerNode> & containerPtr) {
     ContainerCharacteristics cc(std::to_string(containerPtr->getContainerId()));
     cc.setType(containerPtr->getContainerType());
-    cc.addFunctions(containerPtr->getAvailableFunctions().getAceptedFunctions());
+
+    const std::bitset<Function::MAX_OPTYPE> & aceptedFunctions = containerPtr->getAvailableFunctions().getAceptedFunctions();
+    cc.addFunctions(aceptedFunctions);
+
+    for(int i = 0; i < Function::MAX_OPTYPE; i++) {
+        if(aceptedFunctions.test(i)) {
+            cc.addWorkingRange((Function::OperationType) i, containerPtr->getComparableWorkingRange((Function::OperationType) i));
+        }
+    }
     return cc;
 }
 

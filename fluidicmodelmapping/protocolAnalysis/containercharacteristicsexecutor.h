@@ -28,53 +28,69 @@ public:
     inline virtual void stopStir(const std::string & idSource){}
 
     virtual void centrifugate(const std::string & idSource, units::Frequency intensity);
-    virtual void stopCentrifugate(const std::string & idSource) = 0;
+    inline virtual void stopCentrifugate(const std::string & idSource){}
 
-    virtual void shake(const std::string & idSource, units::Frequency intensity) = 0;
-    virtual void stopShake(const std::string & idSource) = 0;
+    virtual void shake(const std::string & idSource, units::Frequency intensity);
+    inline virtual void stopShake(const std::string & idSource){}
 
-    virtual void startElectrophoresis(const std::string & idSource, units::ElectricField fieldStrenght) = 0;
-    virtual ElectrophoresisResult stopElectrophoresis(const std::string & idSource) = 0;
+    virtual void startElectrophoresis(const std::string & idSource, units::ElectricField fieldStrenght);
 
-    virtual units::Volume getVirtualVolume(const std::string & sourceId) = 0;
-    virtual void loadContainer(const std::string & sourceId, units::Volume initialVolume) = 0;
+    inline virtual std::shared_ptr<ElectrophoresisResult> stopElectrophoresis(const std::string & idSource) {
+        return NULL;
+    }
 
-    virtual void startMeasureOD(const std::string & sourceId, units::Frequency measurementFrequency, units::Length wavelength) = 0;
-    virtual double getMeasureOD(const std::string & sourceId) = 0;
+    virtual units::Volume getVirtualVolume(const std::string & sourceId);
+    virtual void loadContainer(const std::string & sourceId, units::Volume initialVolume);
 
-    virtual void startMeasureTemperature(const std::string & sourceId, units::Frequency measurementFrequency) = 0;
-    virtual units::Temperature getMeasureTemperature(const std::string & sourceId) = 0;
+    virtual void startMeasureOD(const std::string & sourceId, units::Frequency measurementFrequency, units::Length wavelength);
+    inline virtual double getMeasureOD(const std::string & sourceId) {
+        return 0;
+    }
 
-    virtual void startMeasureLuminiscense(const std::string & sourceId, units::Frequency measurementFrequency) = 0;
-    virtual units::LuminousIntensity getMeasureLuminiscense(const std::string & sourceId) = 0;
+    virtual void startMeasureTemperature(const std::string & sourceId, units::Frequency measurementFrequency);
 
-    virtual void startMeasureVolume(const std::string & sourceId, units::Frequency measurementFrequency) = 0;
-    virtual units::Volume getMeasureVolume(const std::string & sourceId) = 0;
+    inline virtual units::Temperature getMeasureTemperature(const std::string & sourceId) {
+        return (0 * units::K);
+    }
+
+    virtual void startMeasureLuminiscense(const std::string & sourceId, units::Frequency measurementFrequency);
+
+    inline virtual units::LuminousIntensity getMeasureLuminiscense(const std::string & sourceId) {
+        return (0 * units::cd);
+    }
+
+    virtual void startMeasureVolume(const std::string & sourceId, units::Frequency measurementFrequency);
+
+    inline virtual units::Volume getMeasureVolume(const std::string & sourceId) {
+        return (0 * units::l);
+    }
 
     virtual void startMeasureFluorescence(const std::string & sourceId,
                                           units::Frequency measurementFrequency,
                                           units::Length excitation,
-                                          units::Length emission) = 0;
-    virtual units::LuminousIntensity getMeasureFluorescence(const std::string & sourceId) = 0;
+                                          units::Length emission);
+    inline virtual units::LuminousIntensity getMeasureFluorescence(const std::string & sourceId) {
+        return (0 * units::cd);
+    }
 
-    virtual void setContinuosFlow(const std::string & idSource, const std::string & idTarget, units::Volumetric_Flow rate) = 0;
-    virtual void stopContinuosFlow(const std::string & idSource, const std::string & idTarget) = 0;
+    virtual void setContinuosFlow(const std::string & idSource, const std::string & idTarget, units::Volumetric_Flow rate);
+    virtual void stopContinuosFlow(const std::string & idSource, const std::string & idTarget);
 
-    virtual units::Time transfer(const std::string & idSource, const std::string & idTarget, units::Volume volume) = 0;
-    virtual void stopTransfer(const std::string & idSource, const std::string & idTarget) = 0;
+    virtual units::Time transfer(const std::string & idSource, const std::string & idTarget, units::Volume volume);
+    virtual void stopTransfer(const std::string & idSource, const std::string & idTarget);
 
     virtual units::Time mix(const std::string & idSource1,
                             const std::string & idSource2,
                             const std::string & idTarget,
                             units::Volume volume1,
-                            units::Volume volume2) = 0;
+                            units::Volume volume2);
 
     virtual void stopMix(const std::string & idSource1,
                          const std::string & idSource2,
-                         const std::string & idTarget) = 0;
+                         const std::string & idTarget);
 
-    virtual void setTimeStep(units::Time time) = 0;
-    virtual units::Time timeStep() = 0;
+    virtual void setTimeStep(units::Time time);
+    virtual units::Time timeStep();
 
     inline const std::unordered_map<std::string,ContainerCharacteristics> & getVcCharacteristicsMap() const {
         return vcCharacteristicsMap;
@@ -82,10 +98,12 @@ public:
     inline const std::vector<MachineFlowStringAdapter::FlowsVector> & getFlowsInTime() const {
         return flowsInTime;
     }
+
 protected:
     units::Time timeSlice;
     MachineFlowStringAdapter machineFlow;
-    std::unordered_map<std::string,ContainerCharacteristics> vcCharacteristicsMap;
+    std::unordered_map<std::string, ContainerCharacteristics> vcCharacteristicsMap;
+
     std::vector<MachineFlowStringAdapter::FlowsVector> flowsInTime;
 
     ContainerCharacteristics & getContainerCharacteristics(const std::string & sourceId);

@@ -43,9 +43,8 @@ void ContainerCharacteristicsExecutor::loadContainer(
     getContainerCharacteristics(sourceId);
 }
 
-double ContainerCharacteristicsExecutor::measureOD(
+double ContainerCharacteristicsExecutor::startMeasureOD(
         const std::string & sourceId,
-        units::Time duration,
         units::Frequency measurementFrequency,
         units::Length wavelength)
 {

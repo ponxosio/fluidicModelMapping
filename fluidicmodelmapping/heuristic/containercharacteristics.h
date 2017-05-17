@@ -34,6 +34,7 @@ public:
     } ContainerCharacteristicsComparator;
 
     ContainerCharacteristics();
+    ContainerCharacteristics(const ContainerCharacteristics & cc);
     ContainerCharacteristics(const std::string & virtualContainerName);
     virtual ~ContainerCharacteristics();
 

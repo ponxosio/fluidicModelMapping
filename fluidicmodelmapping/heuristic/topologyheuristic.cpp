@@ -1,8 +1,13 @@
 #include "topologyheuristic.h"
 
-TopologyHeuristic::TopologyHeuristic(std::shared_ptr<const MachineGraph> machinePtr, const std::vector<ContainerCharacteristics> & orderedProtocolCharacts) :
-    protocolContainerCharacteristics(orderedProtocolCharacts)
+TopologyHeuristic::TopologyHeuristic(
+        std::shared_ptr<const MachineGraph> machinePtr,
+        const std::vector<ContainerCharacteristics> & protocolCharacts) :
+    protocolContainerCharacteristics(protocolCharacts)
 {
+    std::sort(protocolContainerCharacteristics.begin(),
+              protocolContainerCharacteristics.end(),
+              ContainerCharacteristics::ContainerCharacteristicsComparator());
     analyzeMachine(machinePtr);
 }
 

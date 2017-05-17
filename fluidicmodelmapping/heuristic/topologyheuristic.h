@@ -1,6 +1,7 @@
 #ifndef TOPOLOGYHEURISTIC_H
 #define TOPOLOGYHEURISTIC_H
 
+#include <algorithm>
 #include <cmath>
 #include <memory>
 #include <string>
@@ -20,7 +21,7 @@
 class TOPOLOGYHEURISTIC_EXPORT TopologyHeuristic : public HeuristicInterface
 {
 public:
-    TopologyHeuristic(std::shared_ptr<const MachineGraph> machinePtr, const std::vector<ContainerCharacteristics> & orderedProtocolCharacts);
+    TopologyHeuristic(std::shared_ptr<const MachineGraph> machinePtr, const std::vector<ContainerCharacteristics> & protocolCharacts);
     virtual ~TopologyHeuristic();
 
     virtual double evaluateNode(const SearchNode & node, std::vector<int> & compatibleNodes);

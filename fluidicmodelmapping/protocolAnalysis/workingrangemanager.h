@@ -17,6 +17,8 @@
 #include <commonmodel/functions/ranges/shakeworkingrange.h>
 #include <commonmodel/functions/ranges/stirworkingrange.h>
 
+#include <utils/units.h>
+
 class WorkingRangeManager
 {
 public:
@@ -25,23 +27,19 @@ public:
     WorkingRangeManager();
     virtual ~WorkingRangeManager();
 
-    /*
-        route,
-        pump,
-        heat,
-        apply_light,
-        measure_od,
-        stir,
-        centrifugate,
-        shake,
-        electrophoresis,
-        measure_temperature,
-        measure_luminiscence,
-        measure_fluorescence,
-        measure_volume
-    */
-
-
+    void setValveWorkingRate();
+    void setPumpWorkingRange(units::Volumetric_Flow rateValue);
+    void setHeaterWorkingRange(units::Temperature temperatreValue);
+    void setLigthWorkingRange(units::LuminousIntensity intensity, units::Length wavelength);
+    void setOdSensorWorkingRange(units::Length wavelength);
+    void setStirerWorkingRange(units::Frequency intensity);
+    void setShakerWorkingRange(units::Frequency intensity);
+    void setCentrifugerWorkingRange(units::Frequency intensity);
+    void setElectrophorerWorkingRange(units::ElectricField intensity);
+    void setTemperatureSensorWorkingRange();
+    void setLuminiscenceSensorWorkingRange();
+    void setFluorescenceSensorWorkingRange(units::Length emission, units::Length excitation);
+    void setVolumeSensorWorkingRange();
 
     inline const WorkingRangeMap & getWorkingRangeMap() const {
         return workingRangeMap;

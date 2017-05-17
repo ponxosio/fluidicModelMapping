@@ -9,13 +9,18 @@
 
 #include <protocolGraph/execution_interface/actuatorsexecutioninterface.h>
 
+#include <graph/Edge.h>
+#include <graph/Graph.h>
+#include <graph/Node.h>
+
 #include "fluidicmodelmapping/heuristic/containercharacteristics.h"
 #include "fluidicmodelmapping/protocolAnalysis/machineflowstringadapter.h"
+#include "fluidicmodelmapping/protocolAnalysis/workingrangemanager.h"
 
 class ContainerCharacteristicsExecutor : public ActuatorsExecutionInterface
 {
 public:
-    ContainerCharacteristicsExecutor();
+    ContainerCharacteristicsExecutor(units::Volumetric_Flow defaultRate);
     virtual ~ContainerCharacteristicsExecutor();
 
     virtual void applyLigth(const std::string & sourceId, units::Length wavelength, units::LuminousIntensity intensity);
@@ -84,7 +89,6 @@ public:
                             const std::string & idTarget,
                             units::Volume volume1,
                             units::Volume volume2);
-
     virtual void stopMix(const std::string & idSource1,
                          const std::string & idSource2,
                          const std::string & idTarget);
@@ -98,15 +102,28 @@ public:
     inline const std::vector<MachineFlowStringAdapter::FlowsVector> & getFlowsInTime() const {
         return flowsInTime;
     }
+    inline const std::unordered_map<std::string, WorkingRangeManager> & getVcWorkingrangeMap() const {
+        return vcWorkingrangeMap;
+    }
+    inline const Graph<Node, Edge> & getConnectionGraph() const {
+        return connectionGraph;
+    }
 
 protected:
+    units::Volumetric_Flow defaultRate;
+
     units::Time timeSlice;
     MachineFlowStringAdapter machineFlow;
-    std::unordered_map<std::string, ContainerCharacteristics> vcCharacteristicsMap;
 
+    Graph<Node, Edge> connectionGraph;
+
+    std::unordered_map<std::string, ContainerCharacteristics> vcCharacteristicsMap;
+    std::unordered_map<std::string, WorkingRangeManager> vcWorkingrangeMap;
     std::vector<MachineFlowStringAdapter::FlowsVector> flowsInTime;
 
+    void analyzeFlowInTime(const MachineFlowStringAdapter::FlowsVector & flows) throw(std::invalid_argument);
     ContainerCharacteristics & getContainerCharacteristics(const std::string & sourceId);
+    WorkingRangeManager & getContainerWorkingRange(const std::string & sourceId);
 };
 
 #endif // CONTAINERCHARACTERISTICSEXECUTOR_H

@@ -19,7 +19,6 @@ unix {
 HEADERS += \
     fluidicmodelmapping/fluidicmodelmapping_global.h \
     fluidicmodelmapping/fluidicmodelmapping.h \
-    fluidicmodelmapping/fluidicmachineconnectiontable.h \
     fluidicmodelmapping/heuristic/heuristicinterface.h \
     fluidicmodelmapping/protocolAnalysis/analysisexecutor.h \
     fluidicmodelmapping/protocolAnalysis/containercharacteristicsexecutor.h \
@@ -74,7 +73,6 @@ LIBS += -L$$quote(X:\swipl\lib) -llibswipl
 
 SOURCES += \
     fluidicmodelmapping/fluidicmodelmapping.cpp \
-    fluidicmodelmapping/fluidicmachineconnectiontable.cpp \
     fluidicmodelmapping/protocolAnalysis/analysisexecutor.cpp \
     fluidicmodelmapping/protocolAnalysis/containercharacteristicsexecutor.cpp \
     fluidicmodelmapping/heuristic/containercharacteristics.cpp \

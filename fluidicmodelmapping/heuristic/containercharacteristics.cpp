@@ -8,6 +8,16 @@ ContainerCharacteristics::ContainerCharacteristics() {
     this->leavingConnections = 0;
 }
 
+ContainerCharacteristics::ContainerCharacteristics(const ContainerCharacteristics & cc) :
+    containerName(cc.containerName),
+    neccesaryFunctionsMask(cc.neccesaryFunctionsMask),
+    workingRangeMap(cc.workingRangeMap)
+{
+    this->arrivingConnections = cc.arrivingConnections;
+    this->leavingConnections = cc.leavingConnections;
+    this->type = cc.type;
+}
+
 ContainerCharacteristics::ContainerCharacteristics(const std::string & virtualContainerName) :
     containerName(virtualContainerName)
 {

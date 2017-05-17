@@ -10,7 +10,9 @@
 
 #include "fluidicmodelmapping/protocolAnalysis/containercharacteristicsexecutor.h"
 
-class AnalysisExecutor
+#include "fluidicmodelmapping/fluidicmodelmapping_global.h"
+
+class ANALYSISEXECUTOR_EXPORT AnalysisExecutor
 {
 public:
     AnalysisExecutor(std::shared_ptr<ProtocolGraph> protocol, units::Volumetric_Flow defaultUnits) throw(std::invalid_argument);

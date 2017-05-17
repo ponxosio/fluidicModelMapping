@@ -16,10 +16,10 @@
 
 class CONTAINERCHARACTERISTICS_EXPORT ContainerCharacteristics
 {
-    typedef std::unordered_map<Function::OperationType, const std::shared_ptr<const ComparableRangeInterface>, Function::OperationTypeHash> WorkingRangeMap;
-
 public:
+
     typedef std::bitset<Function::MAX_OPTYPE> FunctionsBitSet;
+    typedef std::unordered_map<Function::OperationType, const std::shared_ptr<const ComparableRangeInterface>, Function::OperationTypeHash> WorkingRangeMap;
 
     typedef struct _ContainerCharacteristicsComparator {
         bool operator()(const ContainerCharacteristics & x, const ContainerCharacteristics & y) const throw () {
@@ -74,6 +74,10 @@ public:
 
     inline unsigned int getLeavingConnections() const {
         return leavingConnections;
+    }
+
+    inline const WorkingRangeMap & getWorkingRangeMap() const {
+        return workingRangeMap;
     }
 
 protected:

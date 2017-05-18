@@ -19,6 +19,8 @@ AnalysisExecutor::~AnalysisExecutor() {
 }
 
 void AnalysisExecutor::analyzeProtocol(std::shared_ptr<ProtocolGraph> protocol, ContainerCharacteristicsExecutor* executor) {
+    std::unordered_set<ProtocolGraph::ProtocolEdgePtr> physicalEdges;
+
     std::vector<int> nodes2process = {protocol->getStart()->getContainerId()};
     while(!nodes2process.empty()) {
         int nextId = nodes2process.back();
@@ -32,7 +34,7 @@ void AnalysisExecutor::analyzeProtocol(std::shared_ptr<ProtocolGraph> protocol, 
 
         ProtocolGraph::ProtocolEdgeVectorPtr leaving = protocol->getProjectingEdges(nextId);
         for(const ProtocolGraph::ProtocolEdgePtr & edge: *leaving.get()) {
-            if (edge->isPhyscal() || edge->conditionMet()) {
+            if (checkCondinalEdge(edge, physicalEdges)) {
                 int nextop = edge->getIdTarget();
                 if (find(nodes2process.begin(),nodes2process.end(), nextop) == nodes2process.end()) {
                     nodes2process.push_back(nextop);
@@ -40,6 +42,21 @@ void AnalysisExecutor::analyzeProtocol(std::shared_ptr<ProtocolGraph> protocol, 
             }
         }
     }
+}
+
+bool AnalysisExecutor::checkCondinalEdge(const ProtocolGraph::ProtocolEdgePtr & edge, std::unordered_set<ProtocolGraph::ProtocolEdgePtr> & physicalEdgesChecked) {
+    bool isConditionMet;
+    if (edge->isPhyscal()) {
+        isConditionMet = false;
+        auto finded = physicalEdgesChecked.find(edge);
+        if (finded == physicalEdgesChecked.end()) {
+            isConditionMet = true;
+            physicalEdgesChecked.insert(edge);
+        }
+    } else {
+        isConditionMet = edge->conditionMet();
+    }
+    return isConditionMet;
 }
 
 void AnalysisExecutor::processResults(ContainerCharacteristicsExecutor* executor) throw(std::invalid_argument) {
@@ -75,17 +92,23 @@ void AnalysisExecutor::addArrivingLeavingConnections(
 
     const std::shared_ptr<Node> & nodePtr = graph.getNode(id);
     if(nodePtr != NULL) {
-        container.setArrivingConnections(graph.getArrivingEdges(id)->size());
-        container.setLeavingConnections(graph.getLeavingEdges(id)->size());
-    } else {
-        throw(std::invalid_argument("AnalysisExecutor::addArrivingLeavingConnections. " + container.getName() + " is not on the graph"));
+        int arrivingEdges = graph.getArrivingEdges(id)->size();
+        int leavingEdges = graph.getLeavingEdges(id)->size();
+
+        container.setArrivingConnections(arrivingEdges);
+        container.setLeavingConnections(leavingEdges);
+
+        if ((arrivingEdges == 0) || (leavingEdges == 0)) {
+            container.setType(ContainerNode::open);
+        } else {
+            container.setType(ContainerNode::close);
+        }
     }
 }
 
 void AnalysisExecutor::addWorkingRanges(
         const std::unordered_map<std::string, WorkingRangeManager> & workingRangeMap,
         ContainerCharacteristics & container)
-    throw(std::invalid_argument)
 {
     auto finded = workingRangeMap.find(container.getName());
     if (finded != workingRangeMap.end()) {
@@ -96,8 +119,6 @@ void AnalysisExecutor::addWorkingRanges(
 
             container.addWorkingRange(op, workingRangePtr);
         }
-    } else {
-        throw(std::invalid_argument("AnalysisExecutor::addWorkingRanges. " + container.getName() + " not present in workingRangeMap"));
     }
 }
 

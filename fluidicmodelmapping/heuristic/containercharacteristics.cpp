@@ -40,7 +40,7 @@ bool ContainerCharacteristics::compatible(const ContainerCharacteristics & conta
 
 void ContainerCharacteristics::addFunctions(Function::OperationType op) {
     int pos = (int) op;
-    neccesaryFunctionsMask[pos] = 1;
+    neccesaryFunctionsMask.set(pos);
 }
 
 void ContainerCharacteristics::addFunctions(const FunctionsBitSet & functions) {

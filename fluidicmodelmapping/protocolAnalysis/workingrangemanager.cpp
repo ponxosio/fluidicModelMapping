@@ -109,7 +109,7 @@ void WorkingRangeManager::setShakerWorkingRange(units::Frequency intensity) {
 }
 
 void WorkingRangeManager::setCentrifugerWorkingRange(units::Frequency intensity) {
-    auto finded = workingRangeMap.find(Function::shake);
+    auto finded = workingRangeMap.find(Function::centrifugate);
     if (finded == workingRangeMap.end()) {
         workingRangeMap.insert(std::make_pair(Function::centrifugate, std::make_shared<CentrifugationWorkingRange>(intensity, intensity)));
     } else {

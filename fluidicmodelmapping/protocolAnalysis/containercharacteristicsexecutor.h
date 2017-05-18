@@ -119,6 +119,8 @@ protected:
 
     std::unordered_map<std::string, ContainerCharacteristics> vcCharacteristicsMap;
     std::unordered_map<std::string, WorkingRangeManager> vcWorkingrangeMap;
+
+    bool flowsNeedChecking;
     std::vector<MachineFlowStringAdapter::FlowsVector> flowsInTime;
 
     void analyzeFlowInTime(const MachineFlowStringAdapter::FlowsVector & flows) throw(std::invalid_argument);

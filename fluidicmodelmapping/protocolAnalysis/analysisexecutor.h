@@ -4,8 +4,12 @@
 #include <functional>
 #include <memory>
 #include <stdexcept>
+#include <vector>
+#include <unordered_set>
 
 #include <protocolGraph/ProtocolGraph.h>
+#include <protocolGraph/ConditionEdge.h>
+
 #include <utils/units.h>
 
 #include "fluidicmodelmapping/protocolAnalysis/containercharacteristicsexecutor.h"
@@ -31,12 +35,14 @@ protected:
     std::vector<MachineFlowStringAdapter::FlowsVector> flowsInTime;
 
     void analyzeProtocol(std::shared_ptr<ProtocolGraph> protocol, ContainerCharacteristicsExecutor* executor);
-    void processResults(ContainerCharacteristicsExecutor* executor) throw(std::invalid_argument);
+    bool checkCondinalEdge(const ProtocolGraph::ProtocolEdgePtr & edge, std::unordered_set<ProtocolGraph::ProtocolEdgePtr> & physicalEdgesChecked);
 
+    void processResults(ContainerCharacteristicsExecutor* executor) throw(std::invalid_argument);
     void addArrivingLeavingConnections(const Graph<Node,Edge> & graph,
                                        ContainerCharacteristics & container) throw(std::invalid_argument);
-    void addWorkingRanges(const std::unordered_map<std::string, WorkingRangeManager> & workingRangeMap,
-                          ContainerCharacteristics & container) throw(std::invalid_argument);
+    void addWorkingRanges(const std::unordered_map<std::string,
+                          WorkingRangeManager> & workingRangeMap,
+                          ContainerCharacteristics & container);
 };
 
 #endif // ANALYSISEXECUTOR_H

@@ -3,6 +3,7 @@
 ContainerCharacteristicsExecutor::ContainerCharacteristicsExecutor(units::Volumetric_Flow defaultRate)
 {
     this->defaultRate = defaultRate;
+    this->flowsNeedChecking = false;
 }
 
 ContainerCharacteristicsExecutor::~ContainerCharacteristicsExecutor() {
@@ -10,9 +11,8 @@ ContainerCharacteristicsExecutor::~ContainerCharacteristicsExecutor() {
 }
 
 void ContainerCharacteristicsExecutor::applyLigth(const std::string & sourceId, units::Length wavelength, units::LuminousIntensity intensity) {
-    ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
-    unsigned long mask = FunctionSet::FUNCTIONS_FLAG_MAP.at(Function::apply_light);
-    cCh.addFunctions(mask);
+    ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);    
+    cCh.addFunctions(Function::apply_light);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(sourceId);
     workingRange.setLigthWorkingRange(intensity, wavelength);
@@ -20,8 +20,7 @@ void ContainerCharacteristicsExecutor::applyLigth(const std::string & sourceId, 
 
 void ContainerCharacteristicsExecutor::applyTemperature(const std::string & sourceId, units::Temperature temperature) {
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
-    unsigned long mask = FunctionSet::FUNCTIONS_FLAG_MAP.at(Function::heat);
-    cCh.addFunctions(mask);
+    cCh.addFunctions(Function::heat);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(sourceId);
     workingRange.setHeaterWorkingRange(temperature);
@@ -29,8 +28,7 @@ void ContainerCharacteristicsExecutor::applyTemperature(const std::string & sour
 
 void ContainerCharacteristicsExecutor::stir(const std::string & idSource, units::Frequency intensity) {
     ContainerCharacteristics & cCh = getContainerCharacteristics(idSource);
-    unsigned long mask = FunctionSet::FUNCTIONS_FLAG_MAP.at(Function::stir);
-    cCh.addFunctions(mask);
+    cCh.addFunctions(Function::stir);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(idSource);
     workingRange.setStirerWorkingRange(intensity);
@@ -38,8 +36,7 @@ void ContainerCharacteristicsExecutor::stir(const std::string & idSource, units:
 
 void ContainerCharacteristicsExecutor::centrifugate(const std::string & idSource, units::Frequency intensity) {
     ContainerCharacteristics & cCh = getContainerCharacteristics(idSource);
-    unsigned long mask = FunctionSet::FUNCTIONS_FLAG_MAP.at(Function::centrifugate);
-    cCh.addFunctions(mask);
+    cCh.addFunctions(Function::centrifugate);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(idSource);
     workingRange.setCentrifugerWorkingRange(intensity);
@@ -47,8 +44,7 @@ void ContainerCharacteristicsExecutor::centrifugate(const std::string & idSource
 
 void ContainerCharacteristicsExecutor::shake(const std::string & idSource, units::Frequency intensity) {
     ContainerCharacteristics & cCh = getContainerCharacteristics(idSource);
-    unsigned long mask = FunctionSet::FUNCTIONS_FLAG_MAP.at(Function::shake);
-    cCh.addFunctions(mask);
+    cCh.addFunctions(Function::shake);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(idSource);
     workingRange.setShakerWorkingRange(intensity);
@@ -56,8 +52,7 @@ void ContainerCharacteristicsExecutor::shake(const std::string & idSource, units
 
 void ContainerCharacteristicsExecutor::startElectrophoresis(const std::string & idSource, units::ElectricField fieldStrenght) {
     ContainerCharacteristics & cCh = getContainerCharacteristics(idSource);
-    unsigned long mask = FunctionSet::FUNCTIONS_FLAG_MAP.at(Function::electrophoresis);
-    cCh.addFunctions(mask);
+    cCh.addFunctions(Function::electrophoresis);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(idSource);
     workingRange.setElectrophorerWorkingRange(fieldStrenght);
@@ -81,8 +76,7 @@ void ContainerCharacteristicsExecutor::startMeasureOD(
         units::Length wavelength)
 {
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
-    unsigned long mask = FunctionSet::FUNCTIONS_FLAG_MAP.at(Function::measure_od);
-    cCh.addFunctions(mask);
+    cCh.addFunctions(Function::measure_od);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(sourceId);
     workingRange.setOdSensorWorkingRange(wavelength);
@@ -93,8 +87,7 @@ void ContainerCharacteristicsExecutor::startMeasureTemperature(
         units::Frequency measurementFrequency)
 {
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
-    unsigned long mask = FunctionSet::FUNCTIONS_FLAG_MAP.at(Function::measure_temperature);
-    cCh.addFunctions(mask);
+    cCh.addFunctions(Function::measure_temperature);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(sourceId);
     workingRange.setTemperatureSensorWorkingRange();
@@ -105,8 +98,7 @@ void ContainerCharacteristicsExecutor::startMeasureLuminiscense(
         units::Frequency measurementFrequency)
 {
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
-    unsigned long mask = FunctionSet::FUNCTIONS_FLAG_MAP.at(Function::measure_luminiscence);
-    cCh.addFunctions(mask);
+    cCh.addFunctions(Function::measure_luminiscence);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(sourceId);
     workingRange.setLuminiscenceSensorWorkingRange();
@@ -117,8 +109,7 @@ void ContainerCharacteristicsExecutor::startMeasureVolume(
         units::Frequency measurementFrequency)
 {
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
-    unsigned long mask = FunctionSet::FUNCTIONS_FLAG_MAP.at(Function::measure_volume);
-    cCh.addFunctions(mask);
+    cCh.addFunctions(Function::measure_volume);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(sourceId);
     workingRange.setVolumeSensorWorkingRange();
@@ -131,8 +122,7 @@ void ContainerCharacteristicsExecutor::startMeasureFluorescence(
         units::Length emission)
 {
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
-    unsigned long mask = FunctionSet::FUNCTIONS_FLAG_MAP.at(Function::measure_fluorescence);
-    cCh.addFunctions(mask);
+    cCh.addFunctions(Function::measure_fluorescence);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(sourceId);
     workingRange.setFluorescenceSensorWorkingRange(emission, excitation);
@@ -143,10 +133,12 @@ void ContainerCharacteristicsExecutor::setContinuosFlow(
         const std::string & idTarget,
         units::Volumetric_Flow rate)
 {
+    flowsNeedChecking = true;
     machineFlow.addFlow(idSource, idTarget, rate);
 }
 
 void ContainerCharacteristicsExecutor::stopContinuosFlow(const std::string & idSource, const std::string & idTarget) {
+    flowsNeedChecking = true;
     machineFlow.removeFlow(idSource, idTarget);
 }
 
@@ -155,11 +147,13 @@ units::Time ContainerCharacteristicsExecutor::transfer(
         const std::string & idTarget,
         units::Volume volume)
 {
+    flowsNeedChecking = true;
     machineFlow.addFlow(idSource, idTarget, defaultRate);
     return timeSlice*2;
 }
 
 void ContainerCharacteristicsExecutor::stopTransfer(const std::string & idSource, const std::string & idTarget) {
+    flowsNeedChecking = true;
     machineFlow.removeFlow(idSource, idTarget);
 }
 
@@ -189,10 +183,14 @@ void ContainerCharacteristicsExecutor::setTimeStep(units::Time time) {
 }
 
 units::Time ContainerCharacteristicsExecutor::timeStep() {
-    const MachineFlowStringAdapter::FlowsVector & flowsVector = machineFlow.updateFlows();
-    analyzeFlowInTime(flowsVector);
-    flowsInTime.push_back(flowsVector);
-
+    if (flowsNeedChecking) {
+        const MachineFlowStringAdapter::FlowsVector & flowsVector = machineFlow.updateFlows();
+        if (!flowsVector.empty()) {
+            analyzeFlowInTime(flowsVector);
+            flowsInTime.push_back(flowsVector);
+        }
+        flowsNeedChecking = false;
+    }
     return timeSlice;
 }
 
@@ -218,6 +216,8 @@ void ContainerCharacteristicsExecutor::analyzeFlowInTime(const MachineFlowString
                 if (!connectionGraph.areConnected(sourceId, targetId)) {
                     connectionGraph.addEdge(std::make_shared<Edge>(sourceId, targetId));
                 }
+
+                lastId = actualId;
             }
         } else {
             throw(std::invalid_argument(

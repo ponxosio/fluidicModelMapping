@@ -1,8 +1,11 @@
 #include "containercharacteristicsexecutor.h"
 
-ContainerCharacteristicsExecutor::ContainerCharacteristicsExecutor(units::Volumetric_Flow defaultRate)
+ContainerCharacteristicsExecutor::ContainerCharacteristicsExecutor(
+        units::Volumetric_Flow defaultRate,
+        units::Volume defaultVolume)
 {
     this->defaultRate = defaultRate;
+    this->defaultVolume = defaultVolume;
     this->flowsNeedChecking = false;
 }
 
@@ -10,52 +13,102 @@ ContainerCharacteristicsExecutor::~ContainerCharacteristicsExecutor() {
 
 }
 
-void ContainerCharacteristicsExecutor::applyLigth(const std::string & sourceId, units::Length wavelength, units::LuminousIntensity intensity) {
+void ContainerCharacteristicsExecutor::applyLigth(
+        const std::string & sourceId,
+        std::shared_ptr<MathematicOperable> wavelength,
+        units::Length wavelengthUnits,
+        std::shared_ptr<MathematicOperable> intensity,
+        units::LuminousIntensity intensityUnits)
+{
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);    
     cCh.addFunctions(Function::apply_light);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(sourceId);
-    workingRange.setLigthWorkingRange(intensity, wavelength);
+    if (wavelength->isPhysical() || intensity->isPhysical()) {
+        workingRange.setActuatorToInfinite(Function::apply_light);
+    } else {
+        workingRange.setLigthWorkingRange(intensity->getValue() * intensityUnits, wavelength->getValue() * wavelengthUnits);
+    }
 }
 
-void ContainerCharacteristicsExecutor::applyTemperature(const std::string & sourceId, units::Temperature temperature) {
+void ContainerCharacteristicsExecutor::applyTemperature(
+        const std::string & sourceId,
+        std::shared_ptr<MathematicOperable> temperature,
+        units::Temperature temperatureUnits)
+{
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
     cCh.addFunctions(Function::heat);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(sourceId);
-    workingRange.setHeaterWorkingRange(temperature);
+    if (temperature->isPhysical()) {
+        workingRange.setActuatorToInfinite(Function::heat);
+    } else {
+        workingRange.setHeaterWorkingRange(temperature->getValue() * temperatureUnits);
+    }
 }
 
-void ContainerCharacteristicsExecutor::stir(const std::string & idSource, units::Frequency intensity) {
+void ContainerCharacteristicsExecutor::stir(
+        const std::string & idSource,
+        std::shared_ptr<MathematicOperable> intensity,
+        units::Frequency intensityUnits)
+{
     ContainerCharacteristics & cCh = getContainerCharacteristics(idSource);
     cCh.addFunctions(Function::stir);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(idSource);
-    workingRange.setStirerWorkingRange(intensity);
+    if (intensity->isPhysical()) {
+        workingRange.setActuatorToInfinite(Function::stir);
+    } else {
+        workingRange.setStirerWorkingRange(intensity->getValue() * intensityUnits);
+    }
 }
 
-void ContainerCharacteristicsExecutor::centrifugate(const std::string & idSource, units::Frequency intensity) {
+void ContainerCharacteristicsExecutor::centrifugate(
+        const std::string & idSource,
+        std::shared_ptr<MathematicOperable> intensity,
+        units::Frequency intensityUnits)
+{
     ContainerCharacteristics & cCh = getContainerCharacteristics(idSource);
     cCh.addFunctions(Function::centrifugate);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(idSource);
-    workingRange.setCentrifugerWorkingRange(intensity);
+    if (intensity->isPhysical()) {
+        workingRange.setActuatorToInfinite(Function::centrifugate);
+    } else {
+        workingRange.setCentrifugerWorkingRange(intensity->getValue() * intensityUnits);
+    }
 }
 
-void ContainerCharacteristicsExecutor::shake(const std::string & idSource, units::Frequency intensity) {
+void ContainerCharacteristicsExecutor::shake(
+        const std::string & idSource,
+        std::shared_ptr<MathematicOperable> intensity,
+        units::Frequency intensityUnits)
+{
     ContainerCharacteristics & cCh = getContainerCharacteristics(idSource);
     cCh.addFunctions(Function::shake);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(idSource);
-    workingRange.setShakerWorkingRange(intensity);
+    if (intensity->isPhysical()) {
+        workingRange.setActuatorToInfinite(Function::shake);
+    } else {
+        workingRange.setShakerWorkingRange(intensity->getValue() * intensityUnits);
+    }
 }
 
-void ContainerCharacteristicsExecutor::startElectrophoresis(const std::string & idSource, units::ElectricField fieldStrenght) {
+void ContainerCharacteristicsExecutor::startElectrophoresis(
+        const std::string & idSource,
+        std::shared_ptr<MathematicOperable> fieldStrenght,
+        units::ElectricField fieldStrenghtUnits)
+{
     ContainerCharacteristics & cCh = getContainerCharacteristics(idSource);
     cCh.addFunctions(Function::electrophoresis);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(idSource);
-    workingRange.setElectrophorerWorkingRange(fieldStrenght);
+    if (fieldStrenght->isPhysical()) {
+        workingRange.setActuatorToInfinite(Function::electrophoresis);
+    } else {
+        workingRange.setElectrophorerWorkingRange(fieldStrenght->getValue() * fieldStrenghtUnits);
+    }
 }
 
 units::Volume ContainerCharacteristicsExecutor::getVirtualVolume(const std::string & sourceId) {
@@ -72,19 +125,26 @@ void ContainerCharacteristicsExecutor::loadContainer(
 
 void ContainerCharacteristicsExecutor::startMeasureOD(
         const std::string & sourceId,
-        units::Frequency measurementFrequency,
-        units::Length wavelength)
+        std::shared_ptr<MathematicOperable> measurementFrequency,
+        units::Frequency measurementFrequencyUnits,
+        std::shared_ptr<MathematicOperable> wavelength,
+        units::Length wavelengthUnits)
 {
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
     cCh.addFunctions(Function::measure_od);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(sourceId);
-    workingRange.setOdSensorWorkingRange(wavelength);
+    if (wavelength->isPhysical()) {
+        workingRange.setActuatorToInfinite(Function::measure_od);
+    } else {
+        workingRange.setOdSensorWorkingRange(wavelength->getValue() * wavelengthUnits);
+    }
 }
 
 void ContainerCharacteristicsExecutor::startMeasureTemperature(
         const std::string & sourceId,
-        units::Frequency measurementFrequency)
+        std::shared_ptr<MathematicOperable> measurementFrequency,
+        units::Frequency measurementFrequencyUnits)
 {
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
     cCh.addFunctions(Function::measure_temperature);
@@ -95,7 +155,8 @@ void ContainerCharacteristicsExecutor::startMeasureTemperature(
 
 void ContainerCharacteristicsExecutor::startMeasureLuminiscense(
         const std::string & sourceId,
-        units::Frequency measurementFrequency)
+        std::shared_ptr<MathematicOperable> measurementFrequency,
+        units::Frequency measurementFrequencyUnits)
 {
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
     cCh.addFunctions(Function::measure_luminiscence);
@@ -106,7 +167,8 @@ void ContainerCharacteristicsExecutor::startMeasureLuminiscense(
 
 void ContainerCharacteristicsExecutor::startMeasureVolume(
         const std::string & sourceId,
-        units::Frequency measurementFrequency)
+        std::shared_ptr<MathematicOperable> measurementFrequency,
+        units::Frequency measurementFrequencyUnits)
 {
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
     cCh.addFunctions(Function::measure_volume);
@@ -117,24 +179,37 @@ void ContainerCharacteristicsExecutor::startMeasureVolume(
 
 void ContainerCharacteristicsExecutor::startMeasureFluorescence(
         const std::string & sourceId,
-        units::Frequency measurementFrequency,
-        units::Length excitation,
-        units::Length emission)
+        std::shared_ptr<MathematicOperable> measurementFrequency,
+        units::Frequency measurementFrequencyUnits,
+        std::shared_ptr<MathematicOperable> excitation,
+        units::Length excitationUnits,
+        std::shared_ptr<MathematicOperable> emission,
+        units::Length emissionUnits)
 {
     ContainerCharacteristics & cCh = getContainerCharacteristics(sourceId);
     cCh.addFunctions(Function::measure_fluorescence);
 
     WorkingRangeManager & workingRange = getContainerWorkingRange(sourceId);
-    workingRange.setFluorescenceSensorWorkingRange(emission, excitation);
+    if (excitation->isPhysical() || emission->isPhysical()) {
+        workingRange.setActuatorToInfinite(Function::measure_fluorescence);
+    } else {
+        workingRange.setFluorescenceSensorWorkingRange(emission->getValue() * emissionUnits, excitation->getValue() * excitationUnits);
+    }
 }
 
 void ContainerCharacteristicsExecutor::setContinuosFlow(
         const std::string & idSource,
         const std::string & idTarget,
-        units::Volumetric_Flow rate)
+        std::shared_ptr<MathematicOperable> rate,
+        units::Volumetric_Flow rateUnits)
 {
     flowsNeedChecking = true;
-    machineFlow.addFlow(idSource, idTarget, rate);
+
+    if (!rate->isPhysical()) {
+        machineFlow.addFlow(idSource, idTarget, rate->getValue() * rateUnits);
+    } else {
+        machineFlow.addFlow(idSource, idTarget, defaultRate);
+    }
 }
 
 void ContainerCharacteristicsExecutor::stopContinuosFlow(const std::string & idSource, const std::string & idTarget) {
@@ -145,11 +220,19 @@ void ContainerCharacteristicsExecutor::stopContinuosFlow(const std::string & idS
 units::Time ContainerCharacteristicsExecutor::transfer(
         const std::string & idSource,
         const std::string & idTarget,
-        units::Volume volume)
+        std::shared_ptr<MathematicOperable> volume,
+        units::Volume volumeUnits)
 {
     flowsNeedChecking = true;
     machineFlow.addFlow(idSource, idTarget, defaultRate);
-    return timeSlice*2;
+
+    units::Time time2Transfer;
+    if (!volume->isPhysical()) {
+        time2Transfer = (volume->getValue() * volumeUnits) / defaultRate;
+    } else {
+        time2Transfer = defaultVolume/defaultRate;
+    }
+    return time2Transfer;
 }
 
 void ContainerCharacteristicsExecutor::stopTransfer(const std::string & idSource, const std::string & idTarget) {
@@ -161,12 +244,14 @@ units::Time ContainerCharacteristicsExecutor::mix(
         const std::string & idSource1,
         const std::string & idSource2,
         const std::string & idTarget,
-        units::Volume volume1,
-        units::Volume volume2)
+        std::shared_ptr<MathematicOperable> volume1,
+        units::Volume volume1Units,
+        std::shared_ptr<MathematicOperable> volume2,
+        units::Volume volume2Units)
 {
-    units::Time duration = transfer(idSource1, idTarget, volume1);
-    transfer(idSource2, idTarget, volume2);
-    return duration;
+    units::Time duration1 = transfer(idSource1, idTarget, volume1, volume1Units);
+    units::Time duration2 = transfer(idSource2, idTarget, volume2, volume2Units);
+    return duration1 > duration2 ? duration1 : duration2;
 }
 
 void ContainerCharacteristicsExecutor::stopMix(

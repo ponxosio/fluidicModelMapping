@@ -172,9 +172,12 @@ void WorkingRangeManager::setFluorescenceSensorWorkingRange(units::Length emissi
     }
 }
 
-void WorkingRangeManager::setVolumeSensorWorkingRange() {
-    auto finded = workingRangeMap.find(Function::measure_volume);
-    if (finded == workingRangeMap.end()) {
-        workingRangeMap.insert(std::make_pair(Function::measure_volume, std::make_shared<EmptyWorkingRange>()));
+void WorkingRangeManager::setActuatorToInfinite(Function::OperationType op) {
+    auto finded = workingRangeMap.find(op);
+    if (finded != workingRangeMap.end()) {
+        std::shared_ptr<ComparableRangeInterface> range = finded->second;
+        range->setInfinite(true);
+    } else {
+        throw(std::invalid_argument("WorkingRangeManager::setActuatorToInfinite. the manager does not has function " + std::to_string((int)op)));
     }
 }

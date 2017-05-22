@@ -8,32 +8,27 @@ FluidicModelMapping::FluidicModelMapping(std::shared_ptr<FluidicMachineModel> mo
 FluidicModelMapping::~FluidicModelMapping() {
 }
 
-bool FluidicModelMapping::areCompatible(std::shared_ptr<ProtocolGraph> graph, int nargs, ...) throw(std::invalid_argument) {
-    if (nargs == 1) {
-        va_list args;
-        va_start(args, nargs);
+bool FluidicModelMapping::areCompatible(
+        std::shared_ptr<ProtocolGraph> graph,
+        std::shared_ptr<ProtocolSimulatorInterface> simulator)
+throw(std::invalid_argument)
+{
+    AnalysisExecutor protocolAnalysis(graph, simulator, model->getDefaultRate() * model->getDefaultRateUnits());
 
-        std::shared_ptr<LogicBlocksManager> logicBlock = va_arg(args, std::shared_ptr<LogicBlocksManager>);
-        AnalysisExecutor protocolAnalysis(graph, logicBlock, model->getDefaultRate() * model->getDefaultRateUnits());
+    //checkForCompatiblePumps(protocolAnalysis.getFlowsInTime()); flows can be with variables (unknow value, better not check)
 
-        //checkForCompatiblePumps(protocolAnalysis.getFlowsInTime()); flows can be with variables (unknow value, better not check)
+    std::shared_ptr<HeuristicInterface> heuristic =
+            std::make_shared<TopologyHeuristic>(model->getMachineGraph(), protocolAnalysis.getVCVector());
+    AStarSearch search(model, heuristic, protocolAnalysis.getVCVector(), protocolAnalysis.getFlowsInTime());
+    bool finded = search.startSearch();
 
-        std::shared_ptr<HeuristicInterface> heuristic =
-                std::make_shared<TopologyHeuristic>(model->getMachineGraph(), protocolAnalysis.getVCVector());
-        AStarSearch search(model, heuristic, protocolAnalysis.getVCVector(), protocolAnalysis.getFlowsInTime());
-        bool finded = search.startSearch();
-
-        if (finded) {
-            relation.clear();
-            for(const auto & actualPair: *search.getRelationTable().begin()) {
-                relation.insert(actualPair);
-            }
+    if (finded) {
+        relation.clear();
+        for(const auto & actualPair: *search.getRelationTable().begin()) {
+            relation.insert(actualPair);
         }
-        va_end(args);
-        return finded;
-    } else {
-        throw(std::invalid_argument("FluidicModelMapping::areCompatible. Must receive one argument, has received: " + std::to_string(nargs)));
     }
+    return finded;
 }
 
 int FluidicModelMapping::getMappedComponent(const string & virtualContainer) throw(std::invalid_argument) {

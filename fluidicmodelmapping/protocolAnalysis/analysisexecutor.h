@@ -7,9 +7,9 @@
 #include <vector>
 #include <unordered_set>
 
-#include <bioblocksTranslation/logicblocksmanager.h>
 #include <protocolGraph/ProtocolGraph.h>
 #include <protocolGraph/ConditionEdge.h>
+#include <protocolGraph/execution_interface/protocolsimulationinterface.h>
 
 #include <utils/units.h>
 
@@ -22,7 +22,7 @@ class ANALYSISEXECUTOR_EXPORT AnalysisExecutor
 {
 public:
     AnalysisExecutor(std::shared_ptr<ProtocolGraph> protocol,
-                     std::shared_ptr<LogicBlocksManager> logicBlock,
+                     std::shared_ptr<ProtocolSimulatorInterface> simulator,
                      units::Volumetric_Flow defaultUnits) throw(std::invalid_argument);
     virtual ~AnalysisExecutor();
 
@@ -38,7 +38,7 @@ protected:
     std::vector<ContainerCharacteristics> vcVector;
     std::vector<MachineFlowStringAdapter::FlowsVector> flowsInTime;
 
-    void processResults(ContainerCharacteristicsExecutor* executor) throw(std::invalid_argument);
+    void processResults(std::shared_ptr<ContainerCharacteristicsExecutor> executor) throw(std::invalid_argument);
     void addArrivingLeavingConnections(const Graph<Node,Edge> & graph,
                                        ContainerCharacteristics & container) throw(std::invalid_argument);
     void addWorkingRanges(const std::unordered_map<std::string,

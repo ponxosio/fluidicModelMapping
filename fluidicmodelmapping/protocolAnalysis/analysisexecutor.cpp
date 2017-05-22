@@ -2,15 +2,14 @@
 
 AnalysisExecutor::AnalysisExecutor(
         std::shared_ptr<ProtocolGraph> protocol,
-        std::shared_ptr<LogicBlocksManager> logicBlock,
+        std::shared_ptr<ProtocolSimulatorInterface> simulator,
         units::Volumetric_Flow defaultUnits)
     throw(std::invalid_argument)
 {
-    ContainerCharacteristicsExecutor executor(defaultUnits);
+    std::shared_ptr<ContainerCharacteristicsExecutor> executor = std::make_shared<ContainerCharacteristicsExecutor>(defaultUnits);
     try {
-        ProtocolRunningSimulator simulator(protocol, logicBlock, &executor);
-        simulator.simulateExecution();
-        processResults(&executor);
+        simulator->simulateProtocol(protocol, executor);
+        processResults(executor);
     } catch (std::exception & e) {
         throw(std::invalid_argument("AnalysisExecutor::AnalysisExecutor. " + std::string(e.what())));
     }
@@ -20,7 +19,7 @@ AnalysisExecutor::~AnalysisExecutor() {
 
 }
 
-void AnalysisExecutor::processResults(ContainerCharacteristicsExecutor* executor) throw(std::invalid_argument) {
+void AnalysisExecutor::processResults(std::shared_ptr<ContainerCharacteristicsExecutor> executor) throw(std::invalid_argument) {
     const std::vector<MachineFlowStringAdapter::FlowsVector> & actualFlowsIntime = executor->getFlowsInTime();
 
     flowsInTime.reserve(actualFlowsIntime.size());

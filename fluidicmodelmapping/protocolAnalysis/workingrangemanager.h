@@ -1,6 +1,7 @@
 #ifndef WORKINGRANGEMANAGER_H
 #define WORKINGRANGEMANAGER_H
 
+#include <limits>
 #include <unordered_map>
 
 #include <commonmodel/functions/function.h>
@@ -40,6 +41,8 @@ public:
     void setLuminiscenceSensorWorkingRange();
     void setFluorescenceSensorWorkingRange(units::Length emission, units::Length excitation);
     void setVolumeSensorWorkingRange();
+
+    void setActuatorToInfinite(Function::OperationType op);
 
     inline const WorkingRangeMap & getWorkingRangeMap() const {
         return workingRangeMap;

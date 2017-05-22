@@ -2,6 +2,7 @@
 #define PROTOCOLRUNNINGSIMULATOR_H
 
 #include <algorithm>
+#include <cstdarg>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -12,6 +13,7 @@
 #include <bioblocksTranslation/logicblocksmanager.h>
 
 #include <protocolGraph/ProtocolGraph.h>
+#include <protocolGraph/execution_interface/protocolsimulationinterface.h>
 #include <protocolGraph/operables/mathematics/VariableEntry.h>
 #include <protocolGraph/operations/controlnode.h>
 
@@ -20,22 +22,21 @@
 #include "fluidicModelMapping/protocolAnalysis/containercharacteristicsexecutor.h"
 #include "fluidicModelMapping/protocolAnalysis/machineflowstringadapter.h"
 
-class ProtocolRunningSimulator
+class ProtocolRunningSimulator : public ProtocolSimulatorInterface
 {
 public:
     ProtocolRunningSimulator(std::shared_ptr<ProtocolGraph> protocol,
-                             std::shared_ptr<LogicBlocksManager> logicBlocks,
-                             ContainerCharacteristicsExecutor* executor);
+                             std::shared_ptr<LogicBlocksManager> logicBlocks);
+
     virtual ~ProtocolRunningSimulator();
 
-    void simulateExecution() throw(std::runtime_error);
+    virtual void simulateProtocol(std::shared_ptr<ActuatorsSimulationInterface> executor) throw (std::runtime_error);
 
 protected:
     class IfState;
 
-    std::shared_ptr<ProtocolGraph> protocol;
-    std::shared_ptr<LogicBlocksManager> logicBlocks;
-    ContainerCharacteristicsExecutor* executor;
+    std::shared_ptr<ActuatorsSimulationInterface> executor;
+    std::shared_ptr<LogicBlocksManager> logicBlocks;    
 
     std::unordered_set<int> whilesExecuted;
     std::unordered_map<int, int> ifBranchesExecuted;

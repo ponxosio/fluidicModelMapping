@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <protocolGraph/execution_interface/actuatorsexecutioninterface.h>
+#include <protocolGraph/execution_interface/actuatorssimulationinterface.h>
 
 #include <graph/Edge.h>
 #include <graph/Graph.h>
@@ -19,28 +19,42 @@
 #include "fluidicmodelmapping/protocolAnalysis/machineflowstringadapter.h"
 #include "fluidicmodelmapping/protocolAnalysis/workingrangemanager.h"
 
-class ContainerCharacteristicsExecutor : public ActuatorsExecutionInterface
+class ContainerCharacteristicsExecutor : public ActuatorsSimulationInterface
 {
 public:
-    ContainerCharacteristicsExecutor(units::Volumetric_Flow defaultRate);
+    ContainerCharacteristicsExecutor(units::Volumetric_Flow defaultRate, units::Volume defaultVolume);
     virtual ~ContainerCharacteristicsExecutor();
 
-    virtual void applyLigth(const std::string & sourceId, units::Length wavelength, units::LuminousIntensity intensity);
+    virtual void applyLigth(const std::string & sourceId,
+                            std::shared_ptr<MathematicOperable> wavelength,
+                            units::Length wavelengthUnits,
+                            std::shared_ptr<MathematicOperable> intensity,
+                            units::LuminousIntensity intensityUnits);
     inline virtual void stopApplyLigth(const std::string & sourceId) {}
 
-    virtual void applyTemperature(const std::string & sourceId, units::Temperature temperature);
+    virtual void applyTemperature(const std::string & sourceId,
+                                  std::shared_ptr<MathematicOperable> temperature,
+                                  units::Temperature temperatureUnits);
     inline virtual void stopApplyTemperature(const std::string & sourceId){}
 
-    virtual void stir(const std::string & idSource, units::Frequency intensity);
+    virtual void stir(const std::string & idSource,
+                      std::shared_ptr<MathematicOperable> intensity,
+                      units::Frequency intensityUnits);
     inline virtual void stopStir(const std::string & idSource){}
 
-    virtual void centrifugate(const std::string & idSource, units::Frequency intensity);
+    virtual void centrifugate(const std::string & idSource,
+                              std::shared_ptr<MathematicOperable> intensity,
+                              units::Frequency intensityUnits);
     inline virtual void stopCentrifugate(const std::string & idSource){}
 
-    virtual void shake(const std::string & idSource, units::Frequency intensity);
+    virtual void shake(const std::string & idSource,
+                       std::shared_ptr<MathematicOperable> intensity,
+                       units::Frequency intensityUnits);
     inline virtual void stopShake(const std::string & idSource){}
 
-    virtual void startElectrophoresis(const std::string & idSource, units::ElectricField fieldStrenght);
+    virtual void startElectrophoresis(const std::string & idSource,
+                                      std::shared_ptr<MathematicOperable> fieldStrenght,
+                                      units::ElectricField fieldStrenghtUnits);
 
     inline virtual std::shared_ptr<ElectrophoresisResult> stopElectrophoresis(const std::string & idSource) {
         return NULL;
@@ -49,48 +63,71 @@ public:
     virtual units::Volume getVirtualVolume(const std::string & sourceId);
     virtual void loadContainer(const std::string & sourceId, units::Volume initialVolume);
 
-    virtual void startMeasureOD(const std::string & sourceId, units::Frequency measurementFrequency, units::Length wavelength);
+    virtual void startMeasureOD(const std::string & sourceId,
+                                std::shared_ptr<MathematicOperable> measurementFrequency,
+                                units::Frequency measurementFrequencyUnits,
+                                std::shared_ptr<MathematicOperable> wavelength,
+                                units::Length wavelengthUnits);
     inline virtual double getMeasureOD(const std::string & sourceId) {
         return 0;
     }
 
-    virtual void startMeasureTemperature(const std::string & sourceId, units::Frequency measurementFrequency);
+    virtual void startMeasureTemperature(const std::string & sourceId,
+                                         std::shared_ptr<MathematicOperable> measurementFrequency,
+                                         units::Frequency measurementFrequencyUnits);
 
     inline virtual units::Temperature getMeasureTemperature(const std::string & sourceId) {
         return (0 * units::K);
     }
 
-    virtual void startMeasureLuminiscense(const std::string & sourceId, units::Frequency measurementFrequency);
+    virtual void startMeasureLuminiscense(const std::string & sourceId,
+                                          std::shared_ptr<MathematicOperable> measurementFrequency,
+                                          units::Frequency measurementFrequencyUnits);
 
     inline virtual units::LuminousIntensity getMeasureLuminiscense(const std::string & sourceId) {
         return (0 * units::cd);
     }
 
-    virtual void startMeasureVolume(const std::string & sourceId, units::Frequency measurementFrequency);
+    virtual void startMeasureVolume(const std::string & sourceId,
+                                    std::shared_ptr<MathematicOperable> measurementFrequency,
+                                    units::Frequency measurementFrequencyUnits);
 
     inline virtual units::Volume getMeasureVolume(const std::string & sourceId) {
         return (0 * units::l);
     }
 
     virtual void startMeasureFluorescence(const std::string & sourceId,
-                                          units::Frequency measurementFrequency,
-                                          units::Length excitation,
-                                          units::Length emission);
+                                          std::shared_ptr<MathematicOperable> measurementFrequency,
+                                          units::Frequency measurementFrequencyUnits,
+                                          std::shared_ptr<MathematicOperable> excitation,
+                                          units::Length excitationUnits,
+                                          std::shared_ptr<MathematicOperable> emission,
+                                          units::Length emissionUnits);
+
     inline virtual units::LuminousIntensity getMeasureFluorescence(const std::string & sourceId) {
         return (0 * units::cd);
     }
 
-    virtual void setContinuosFlow(const std::string & idSource, const std::string & idTarget, units::Volumetric_Flow rate);
+    virtual void setContinuosFlow(const std::string & idSource,
+                                  const std::string & idTarget,
+                                  std::shared_ptr<MathematicOperable> rate,
+                                  units::Volumetric_Flow rateUnits);
     virtual void stopContinuosFlow(const std::string & idSource, const std::string & idTarget);
 
-    virtual units::Time transfer(const std::string & idSource, const std::string & idTarget, units::Volume volume);
+    virtual units::Time transfer(const std::string & idSource,
+                                 const std::string & idTarget,
+                                 std::shared_ptr<MathematicOperable> volume,
+                                 units::Volume volumeUnits);
     virtual void stopTransfer(const std::string & idSource, const std::string & idTarget);
 
     virtual units::Time mix(const std::string & idSource1,
                             const std::string & idSource2,
                             const std::string & idTarget,
-                            units::Volume volume1,
-                            units::Volume volume2);
+                            std::shared_ptr<MathematicOperable> volume1,
+                            units::Volume volume1Units,
+                            std::shared_ptr<MathematicOperable> volume2,
+                            units::Volume volume2Units);
+
     virtual void stopMix(const std::string & idSource1,
                          const std::string & idSource2,
                          const std::string & idTarget);
@@ -121,6 +158,7 @@ public:
 
 protected:
     units::Volumetric_Flow defaultRate;
+    units::Volume defaultVolume;
 
     units::Time timeSlice;
     MachineFlowStringAdapter machineFlow;

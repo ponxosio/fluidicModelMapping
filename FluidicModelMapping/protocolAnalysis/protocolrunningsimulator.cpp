@@ -2,19 +2,19 @@
 
 ProtocolRunningSimulator::ProtocolRunningSimulator(
         std::shared_ptr<ProtocolGraph> protocol,
-        std::shared_ptr<LogicBlocksManager> logicBlocks,
-        ContainerCharacteristicsExecutor* executor)
+        std::shared_ptr<LogicBlocksManager> logicBlocks) :
+    ProtocolSimulatorInterface(protocol)
 {
-    this->protocol = protocol;
-    this->logicBlocks = logicBlocks;
-    this->executor = executor;
+    this->logicBlocks = logicBlocks;   
 }
 
 ProtocolRunningSimulator::~ProtocolRunningSimulator() {
 
 }
 
-void ProtocolRunningSimulator::simulateExecution() throw(std::runtime_error) {
+void ProtocolRunningSimulator::simulateExecution(std::shared_ptr<ActuatorsSimulationInterface> executor) throw(std::runtime_error) {
+    this->executor = executor;
+
     std::vector<int> nodes2process = {protocol->getStart()->getContainerId()};
     resetTemporalValues();
 

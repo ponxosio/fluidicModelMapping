@@ -13,6 +13,8 @@
 #include <graph/Graph.h>
 #include <graph/Node.h>
 
+#include <utils/memento.h>
+
 #include "fluidicmodelmapping/heuristic/containercharacteristics.h"
 #include "fluidicmodelmapping/protocolAnalysis/machineflowstringadapter.h"
 #include "fluidicmodelmapping/protocolAnalysis/workingrangemanager.h"
@@ -107,6 +109,14 @@ public:
     }
     inline const Graph<Node, Edge> & getConnectionGraph() const {
         return connectionGraph;
+    }
+
+    inline std::shared_ptr<Memento<MachineFlowStringAdapter>> createMachineFlowStateCopy() const {
+        return machineFlow.createMemento();
+    }
+
+    inline void restoreMachineFlowState(const Memento<MachineFlowStringAdapter> & machineFlowState) {
+        machineFlow.restoreMemento(machineFlowState);
     }
 
 protected:

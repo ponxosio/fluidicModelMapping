@@ -7,19 +7,23 @@
 #include <vector>
 #include <unordered_set>
 
+#include <bioblocksTranslation/logicblocksmanager.h>
 #include <protocolGraph/ProtocolGraph.h>
 #include <protocolGraph/ConditionEdge.h>
 
 #include <utils/units.h>
 
 #include "fluidicmodelmapping/protocolAnalysis/containercharacteristicsexecutor.h"
+#include "fluidicmodelmapping/protocolAnalysis/protocolrunningsimulator.h"
 
 #include "fluidicmodelmapping/fluidicmodelmapping_global.h"
 
 class ANALYSISEXECUTOR_EXPORT AnalysisExecutor
 {
 public:
-    AnalysisExecutor(std::shared_ptr<ProtocolGraph> protocol, units::Volumetric_Flow defaultUnits) throw(std::invalid_argument);
+    AnalysisExecutor(std::shared_ptr<ProtocolGraph> protocol,
+                     std::shared_ptr<LogicBlocksManager> logicBlock,
+                     units::Volumetric_Flow defaultUnits) throw(std::invalid_argument);
     virtual ~AnalysisExecutor();
 
     inline const std::vector<ContainerCharacteristics> & getVCVector() const {
@@ -33,9 +37,6 @@ public:
 protected:
     std::vector<ContainerCharacteristics> vcVector;
     std::vector<MachineFlowStringAdapter::FlowsVector> flowsInTime;
-
-    void analyzeProtocol(std::shared_ptr<ProtocolGraph> protocol, ContainerCharacteristicsExecutor* executor);
-    bool checkCondinalEdge(const ProtocolGraph::ProtocolEdgePtr & edge, std::unordered_set<ProtocolGraph::ProtocolEdgePtr> & physicalEdgesChecked);
 
     void processResults(ContainerCharacteristicsExecutor* executor) throw(std::invalid_argument);
     void addArrivingLeavingConnections(const Graph<Node,Edge> & graph,

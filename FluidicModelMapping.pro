@@ -30,7 +30,8 @@ HEADERS += \
     fluidicmodelmapping/searchalgorithms/astarsearch.h \
     fluidicmodelmapping/searchalgorithms/searchinterface.h \
     fluidicmodelmapping/searchalgorithms/solutioncheck.h \
-    fluidicmodelmapping/protocolAnalysis/workingrangemanager.h
+    fluidicmodelmapping/protocolAnalysis/workingrangemanager.h \
+    fluidicmodelmapping/protocolAnalysis/protocolrunningsimulator.h
 
 debug {
     QMAKE_POST_LINK=X:\fluidicModelMapping\fluidicModelMapping\setDLL.bat $$shell_path($$OUT_PWD/debug) debug
@@ -46,6 +47,9 @@ debug {
 
     INCLUDEPATH += X:\protocolGraph\dll_debug\include
     LIBS += -L$$quote(X:\protocolGraph\dll_debug\bin) -lprotocolGraph
+
+    INCLUDEPATH += X:\bioblocksTranslation\dll_debug\include
+    LIBS += -L$$quote(X:\bioblocksTranslation\dll_debug\bin) -lbioblocksTranslation
 }
 
 !debug {
@@ -62,6 +66,9 @@ debug {
 
     INCLUDEPATH += X:\protocolGraph\dll_release\include
     LIBS += -L$$quote(X:\protocolGraph\dll_release\bin) -lprotocolGraph
+
+    INCLUDEPATH += X:\bioblocksTranslation\dll_release\include
+    LIBS += -L$$quote(X:\bioblocksTranslation\dll_release\bin) -lbioblocksTranslation
 }
 
 INCLUDEPATH += X:\libraries\cereal-1.2.2\include
@@ -82,4 +89,5 @@ SOURCES += \
     fluidicmodelmapping/searchalgorithms/searchnode.cpp \
     fluidicmodelmapping/searchalgorithms/astarsearch.cpp \
     fluidicmodelmapping/searchalgorithms/solutioncheck.cpp \
-    fluidicmodelmapping/protocolAnalysis/workingrangemanager.cpp
+    fluidicmodelmapping/protocolAnalysis/workingrangemanager.cpp \
+    fluidicmodelmapping/protocolAnalysis/protocolrunningsimulator.cpp

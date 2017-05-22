@@ -12,6 +12,14 @@ MachineFlowStringAdapter::MachineFlowStringAdapter() {
 
 }
 
+MachineFlowStringAdapter::MachineFlowStringAdapter(const MachineFlowStringAdapter & mfsa) :
+    machineFlow(mfsa.machineFlow),
+    conversionVector(mfsa.conversionVector),
+    actualFlows(mfsa.actualFlows)
+{
+
+}
+
 MachineFlowStringAdapter::~MachineFlowStringAdapter() {
 
 }
@@ -75,7 +83,23 @@ MachineFlowStringAdapter::PathRateTuple MachineFlowStringAdapter::translatePathT
     return std::make_tuple(transQue, std::get<1>(intTuple));
 }
 
+void MachineFlowStringAdapter::restoreState(const MachineFlowStringAdapter & state) {
+    machineFlow.clear();
+    conversionVector.clear();
+    actualFlows.clear();
 
+    machineFlow.restoreState(state.machineFlow);
+
+    conversionVector.reserve(state.conversionVector.size());
+    for(const auto & elem: state.conversionVector) {
+        conversionVector.push_back(elem);
+    }
+
+    actualFlows.reserve(state.actualFlows.size());
+    for(const auto & elem: state.actualFlows) {
+        actualFlows.push_back(elem);
+    }
+}
 
 
 

@@ -1,8 +1,11 @@
 #ifndef FLUIDICMODELMAPPING_H
 #define FLUIDICMODELMAPPING_H
 
+#include <cstdarg>
 #include <memory>
+#include <stdexcept>
 
+#include <bioblocksTranslation/logicblocksmanager.h>
 #include <commonmodel/mappinginterface/mappinginterface.h>
 #include <fluidicmachinemodel/fluidicmachinemodel.h>
 #include <protocolGraph/ProtocolGraph.h>
@@ -17,7 +20,7 @@ public:
     FluidicModelMapping(std::shared_ptr<FluidicMachineModel> model);
     virtual ~FluidicModelMapping();
 
-    virtual bool areCompatible(std::shared_ptr<ProtocolGraph> graph);
+    virtual bool areCompatible(std::shared_ptr<ProtocolGraph> graph, int nargs, ...) throw(std::invalid_argument);
     virtual int getMappedComponent(const string &virtualContainer) throw(std::invalid_argument);
 
 protected:

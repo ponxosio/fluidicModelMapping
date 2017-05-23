@@ -23,15 +23,13 @@ HEADERS += \
     fluidicmodelmapping/protocolAnalysis/analysisexecutor.h \
     fluidicmodelmapping/protocolAnalysis/containercharacteristicsexecutor.h \
     fluidicmodelmapping/heuristic/containercharacteristics.h \
-    fluidicmodelmapping/protocolAnalysis/machineflowstringadapter.h \
     fluidicmodelmapping/searchalgorithms/deepsearch.h \
     fluidicmodelmapping/searchalgorithms/searchnode.h \
     fluidicmodelmapping/heuristic/topologyheuristic.h \
     fluidicmodelmapping/searchalgorithms/astarsearch.h \
     fluidicmodelmapping/searchalgorithms/searchinterface.h \
     fluidicmodelmapping/searchalgorithms/solutioncheck.h \
-    fluidicmodelmapping/protocolAnalysis/workingrangemanager.h \
-    fluidicmodelmapping/protocolAnalysis/protocolrunningsimulator.h
+    fluidicmodelmapping/protocolAnalysis/workingrangemanager.h
 
 debug {
     QMAKE_POST_LINK=X:\fluidicModelMapping\fluidicModelMapping\setDLL.bat $$shell_path($$OUT_PWD/debug) debug
@@ -83,11 +81,9 @@ SOURCES += \
     fluidicmodelmapping/protocolAnalysis/analysisexecutor.cpp \
     fluidicmodelmapping/protocolAnalysis/containercharacteristicsexecutor.cpp \
     fluidicmodelmapping/heuristic/containercharacteristics.cpp \
-    fluidicmodelmapping/protocolAnalysis/machineflowstringadapter.cpp \
     fluidicmodelmapping/searchalgorithms/deepsearch.cpp \
     fluidicmodelmapping/heuristic/topologyheuristic.cpp \
     fluidicmodelmapping/searchalgorithms/searchnode.cpp \
     fluidicmodelmapping/searchalgorithms/astarsearch.cpp \
     fluidicmodelmapping/searchalgorithms/solutioncheck.cpp \
-    fluidicmodelmapping/protocolAnalysis/workingrangemanager.cpp \
-    fluidicmodelmapping/protocolAnalysis/protocolrunningsimulator.cpp
+    fluidicmodelmapping/protocolAnalysis/workingrangemanager.cpp

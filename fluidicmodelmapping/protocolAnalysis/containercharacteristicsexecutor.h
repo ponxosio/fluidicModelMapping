@@ -14,15 +14,15 @@
 #include <graph/Node.h>
 
 #include <utils/memento.h>
+#include <utils/machineflowstringadapter.h>
 
 #include "fluidicmodelmapping/heuristic/containercharacteristics.h"
-#include "fluidicmodelmapping/protocolAnalysis/machineflowstringadapter.h"
 #include "fluidicmodelmapping/protocolAnalysis/workingrangemanager.h"
 
 class ContainerCharacteristicsExecutor : public ActuatorsSimulationInterface
 {
 public:
-    ContainerCharacteristicsExecutor(units::Volumetric_Flow defaultRate, units::Volume defaultVolume);
+    ContainerCharacteristicsExecutor(units::Volumetric_Flow defaultRate);
     virtual ~ContainerCharacteristicsExecutor();
 
     virtual void applyLigth(const std::string & sourceId,
@@ -147,21 +147,15 @@ public:
     inline const Graph<Node, Edge> & getConnectionGraph() const {
         return connectionGraph;
     }
-
-    inline std::shared_ptr<Memento<MachineFlowStringAdapter>> createMachineFlowStateCopy() const {
-        return machineFlow.createMemento();
-    }
-
-    inline void restoreMachineFlowState(const Memento<MachineFlowStringAdapter> & machineFlowState) {
-        machineFlow.restoreMemento(machineFlowState);
+    inline std::shared_ptr<MachineFlowStringAdapter> getMachineFlows() const {
+        return machineFlow;
     }
 
 protected:
     units::Volumetric_Flow defaultRate;
-    units::Volume defaultVolume;
 
     units::Time timeSlice;
-    MachineFlowStringAdapter machineFlow;
+    std::shared_ptr<MachineFlowStringAdapter> machineFlow;
 
     Graph<Node, Edge> connectionGraph;
 

@@ -14,15 +14,13 @@
 #include <utils/units.h>
 
 #include "fluidicmodelmapping/protocolAnalysis/containercharacteristicsexecutor.h"
-#include "fluidicmodelmapping/protocolAnalysis/protocolrunningsimulator.h"
 
 #include "fluidicmodelmapping/fluidicmodelmapping_global.h"
 
 class ANALYSISEXECUTOR_EXPORT AnalysisExecutor
 {
 public:
-    AnalysisExecutor(std::shared_ptr<ProtocolGraph> protocol,
-                     std::shared_ptr<ProtocolSimulatorInterface> simulator,
+    AnalysisExecutor(std::shared_ptr<ProtocolSimulatorInterface> simulator,
                      units::Volumetric_Flow defaultUnits) throw(std::invalid_argument);
     virtual ~AnalysisExecutor();
 

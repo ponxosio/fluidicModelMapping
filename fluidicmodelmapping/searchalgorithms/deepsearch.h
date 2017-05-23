@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <fluidicmachinemodel/fluidicmachinemodel.h>
-#include <fluidicmachinemodel/machine_graph_utils/machineflow.h>
+#include <utils/machineflow.h>
 
 #include "fluidicmodelmapping/heuristic/containercharacteristics.h"
 #include "fluidicmodelmapping/heuristic/heuristicinterface.h"

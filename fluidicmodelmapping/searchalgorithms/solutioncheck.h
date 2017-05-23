@@ -4,10 +4,10 @@
 #include <memory>
 #include <vector>
 
-#include <fluidicmachinemodel/machine_graph_utils/machineflow.h>
 #include <fluidicmachinemodel/fluidicmachinemodel.h>
+#include <utils/machineflow.h>
+#include <utils/machineflowstringadapter.h>
 
-#include "fluidicmodelmapping/protocolAnalysis/machineflowstringadapter.h"
 #include "fluidicmodelmapping/searchalgorithms/searchinterface.h"
 
 class SolutionCheck

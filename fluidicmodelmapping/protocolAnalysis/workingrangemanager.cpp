@@ -172,6 +172,13 @@ void WorkingRangeManager::setFluorescenceSensorWorkingRange(units::Length emissi
     }
 }
 
+void WorkingRangeManager::setVolumeSensorWorkingRange() {
+    auto finded = workingRangeMap.find(Function::measure_volume);
+    if (finded == workingRangeMap.end()) {
+        workingRangeMap.insert(std::make_pair(Function::measure_volume, std::make_shared<EmptyWorkingRange>()));
+    }
+}
+
 void WorkingRangeManager::setActuatorToInfinite(Function::OperationType op) {
     auto finded = workingRangeMap.find(op);
     if (finded != workingRangeMap.end()) {

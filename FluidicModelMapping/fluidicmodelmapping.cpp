@@ -8,17 +8,16 @@ FluidicModelMapping::FluidicModelMapping(std::shared_ptr<FluidicMachineModel> mo
 FluidicModelMapping::~FluidicModelMapping() {
 }
 
-bool FluidicModelMapping::areCompatible(
-        std::shared_ptr<ProtocolGraph> graph,
-        std::shared_ptr<ProtocolSimulatorInterface> simulator)
+bool FluidicModelMapping::areCompatible(std::shared_ptr<ProtocolSimulatorInterface> simulator)
 throw(std::invalid_argument)
 {
-    AnalysisExecutor protocolAnalysis(graph, simulator, model->getDefaultRate() * model->getDefaultRateUnits());
+    AnalysisExecutor protocolAnalysis(simulator, model->getDefaultRate() * model->getDefaultRateUnits());
 
-    //checkForCompatiblePumps(protocolAnalysis.getFlowsInTime()); flows can be with variables (unknow value, better not check)
+    checkForCompatiblePumps(protocolAnalysis.getFlowsInTime());
 
     std::shared_ptr<HeuristicInterface> heuristic =
             std::make_shared<TopologyHeuristic>(model->getMachineGraph(), protocolAnalysis.getVCVector());
+
     AStarSearch search(model, heuristic, protocolAnalysis.getVCVector(), protocolAnalysis.getFlowsInTime());
     bool finded = search.startSearch();
 

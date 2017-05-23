@@ -1,11 +1,9 @@
 #include "containercharacteristicsexecutor.h"
 
-ContainerCharacteristicsExecutor::ContainerCharacteristicsExecutor(
-        units::Volumetric_Flow defaultRate,
-        units::Volume defaultVolume)
+ContainerCharacteristicsExecutor::ContainerCharacteristicsExecutor(units::Volumetric_Flow defaultRate)
 {
     this->defaultRate = defaultRate;
-    this->defaultVolume = defaultVolume;
+    this->machineFlow = std::make_shared<MachineFlowStringAdapter>();
     this->flowsNeedChecking = false;
 }
 
@@ -206,15 +204,15 @@ void ContainerCharacteristicsExecutor::setContinuosFlow(
     flowsNeedChecking = true;
 
     if (!rate->isPhysical()) {
-        machineFlow.addFlow(idSource, idTarget, rate->getValue() * rateUnits);
+        machineFlow->addFlow(idSource, idTarget, rate->getValue() * rateUnits);
     } else {
-        machineFlow.addFlow(idSource, idTarget, defaultRate);
+        machineFlow->addFlow(idSource, idTarget, defaultRate);
     }
 }
 
 void ContainerCharacteristicsExecutor::stopContinuosFlow(const std::string & idSource, const std::string & idTarget) {
     flowsNeedChecking = true;
-    machineFlow.removeFlow(idSource, idTarget);
+    machineFlow->removeFlow(idSource, idTarget);
 }
 
 units::Time ContainerCharacteristicsExecutor::transfer(
@@ -224,20 +222,20 @@ units::Time ContainerCharacteristicsExecutor::transfer(
         units::Volume volumeUnits)
 {
     flowsNeedChecking = true;
-    machineFlow.addFlow(idSource, idTarget, defaultRate);
+    machineFlow->addFlow(idSource, idTarget, defaultRate);
 
     units::Time time2Transfer;
     if (!volume->isPhysical()) {
         time2Transfer = (volume->getValue() * volumeUnits) / defaultRate;
     } else {
-        time2Transfer = defaultVolume/defaultRate;
+        time2Transfer = timeSlice;
     }
     return time2Transfer;
 }
 
 void ContainerCharacteristicsExecutor::stopTransfer(const std::string & idSource, const std::string & idTarget) {
     flowsNeedChecking = true;
-    machineFlow.removeFlow(idSource, idTarget);
+    machineFlow->removeFlow(idSource, idTarget);
 }
 
 units::Time ContainerCharacteristicsExecutor::mix(
@@ -269,7 +267,7 @@ void ContainerCharacteristicsExecutor::setTimeStep(units::Time time) {
 
 units::Time ContainerCharacteristicsExecutor::timeStep() {
     if (flowsNeedChecking) {
-        const MachineFlowStringAdapter::FlowsVector & flowsVector = machineFlow.updateFlows();
+        const MachineFlowStringAdapter::FlowsVector & flowsVector = machineFlow->updateFlows();
         if (!flowsVector.empty()) {
             analyzeFlowInTime(flowsVector);
             flowsInTime.push_back(flowsVector);

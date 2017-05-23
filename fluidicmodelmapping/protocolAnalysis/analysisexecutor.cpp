@@ -1,14 +1,13 @@
 #include "analysisexecutor.h"
 
 AnalysisExecutor::AnalysisExecutor(
-        std::shared_ptr<ProtocolGraph> protocol,
         std::shared_ptr<ProtocolSimulatorInterface> simulator,
         units::Volumetric_Flow defaultUnits)
     throw(std::invalid_argument)
 {
     std::shared_ptr<ContainerCharacteristicsExecutor> executor = std::make_shared<ContainerCharacteristicsExecutor>(defaultUnits);
     try {
-        simulator->simulateProtocol(protocol, executor);
+        simulator->simulateProtocol(executor, 1, executor->getMachineFlows());
         processResults(executor);
     } catch (std::exception & e) {
         throw(std::invalid_argument("AnalysisExecutor::AnalysisExecutor. " + std::string(e.what())));

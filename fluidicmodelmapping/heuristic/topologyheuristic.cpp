@@ -5,9 +5,6 @@ TopologyHeuristic::TopologyHeuristic(
         const std::vector<ContainerCharacteristics> & protocolCharacts) :
     protocolContainerCharacteristics(protocolCharacts)
 {
-    std::sort(protocolContainerCharacteristics.begin(),
-              protocolContainerCharacteristics.end(),
-              ContainerCharacteristics::ContainerCharacteristicsComparator());
     analyzeMachine(machinePtr);
 }
 
@@ -48,21 +45,55 @@ double TopologyHeuristic::evaluateNode(const SearchNode & node, std::vector<int>
 void TopologyHeuristic::analyzeMachine(std::shared_ptr<const MachineGraph> machinePtr) {
     for(int closeCId : machinePtr->getCloseContainersIdsSet()) {
         ContainerCharacteristics cc = analyzeContainer(machinePtr->getContainer(closeCId));
-        cc.setLeavingConnections(machinePtr->getLeavingTubes(closeCId)->size());
-        cc.setArrivingConnections(machinePtr->getArrivingTubes(closeCId)->size());
+        cc.setNumberConnections(countContainersConnected(closeCId, machinePtr));
         machineContainerCharacteristics.insert(std::make_pair(closeCId, cc));
     }
     for(int openCId : machinePtr->getOpenContainersIdsSet()) {
         ContainerCharacteristics cc = analyzeContainer(machinePtr->getContainer(openCId));
-        cc.setLeavingConnections(machinePtr->getLeavingTubes(openCId)->size());
-        cc.setArrivingConnections(machinePtr->getArrivingTubes(openCId)->size());
+        cc.setNumberConnections(countContainersConnected(openCId, machinePtr));
         machineContainerCharacteristics.insert(std::make_pair(openCId, cc));
     }
+}
+
+int TopologyHeuristic::countContainersConnected(int id, std::shared_ptr<const MachineGraph> machinePtr) {
+    int numContainersConnected = 0;
+    std::unordered_set<int> visitedNodes;
+    std::vector<int> nodes2process = {id};
+
+    while(!nodes2process.empty()) {
+        int nextNode = nodes2process.back();
+        nodes2process.pop_back();
+
+        visitedNodes.insert(nextNode);
+
+        for(const std::shared_ptr<TubeEdge> & leavingEdge : *machinePtr->getLeavingTubes(nextNode)) {
+            int node2add = leavingEdge->getIdTarget();
+            if (visitedNodes.find(node2add) == visitedNodes.end()) {
+                if (machinePtr->isContainer(node2add)) {
+                    numContainersConnected++;
+                } else {
+                    nodes2process.push_back(node2add);
+                }
+            }
+        }
+        for(const std::shared_ptr<TubeEdge> & arrivingEdge : *machinePtr->getArrivingTubes(nextNode)) {
+            int node2add = arrivingEdge->getIdSource();
+            if (visitedNodes.find(node2add) == visitedNodes.end()) {
+                if (machinePtr->isContainer(node2add)) {
+                    numContainersConnected++;
+                } else {
+                    nodes2process.push_back(node2add);
+                }
+            }
+        }
+    }
+    return numContainersConnected;
 }
 
 ContainerCharacteristics TopologyHeuristic::analyzeContainer(const std::shared_ptr<ContainerNode> & containerPtr) {
     ContainerCharacteristics cc(std::to_string(containerPtr->getContainerId()));
     cc.setType(containerPtr->getContainerType());
+    cc.setMinCapacity(containerPtr->getMaxVolume());
 
     const std::bitset<Function::MAX_OPTYPE> & aceptedFunctions = containerPtr->getAvailableFunctions().getAceptedFunctions();
     cc.addFunctions(aceptedFunctions);
@@ -77,8 +108,7 @@ ContainerCharacteristics TopologyHeuristic::analyzeContainer(const std::shared_p
 
 int TopologyHeuristic::getContainerSimilarityIndex(const ContainerCharacteristics & container1, const ContainerCharacteristics & container2) {
     int value = 1;
-    value += std::abs((int)(container1.getArrivingConnections() - container2.getArrivingConnections()));
-    value += std::abs((int)(container1.getLeavingConnections() - container2.getLeavingConnections()));
+    value += std::abs((int)(container1.getNumberConnections() - container2.getNumberConnections()));
     value += std::abs((int)(container1.getNeccesaryFunctionsMask().count() - container2.getNeccesaryFunctionsMask().count()));
     return value;
 }

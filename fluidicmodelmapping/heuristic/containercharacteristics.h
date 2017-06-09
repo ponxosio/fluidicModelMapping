@@ -26,7 +26,7 @@ public:
             int opsX = x.neccesaryFunctionsMask.count();
             int opsY = y.neccesaryFunctionsMask.count();
             if ( opsX == opsY) {
-                return (x.arrivingConnections + x.leavingConnections) > (y.arrivingConnections + y.leavingConnections);
+                return (x.numberConnections) > (y.numberConnections);
             } else {
                 return opsX > opsY;
             }
@@ -48,12 +48,8 @@ public:
         this->type = type;
     }
 
-    inline void setArrivingConnections(unsigned int numberConnections) {
-        this->arrivingConnections = numberConnections;
-    }
-
-    inline void setLeavingConnections(unsigned int numberConnections) {
-        this->leavingConnections = numberConnections;
+    inline void setNumberConnections(unsigned int numberConnections) {
+        this->numberConnections = numberConnections;
     }
 
     inline const std::string & getName() const {
@@ -68,27 +64,33 @@ public:
         return type;
     }
 
-    inline unsigned int getArrivingConnections() const {
-        return arrivingConnections;
-    }
-
-    inline unsigned int getLeavingConnections() const {
-        return leavingConnections;
+    inline unsigned int getNumberConnections() const {
+        return numberConnections;
     }
 
     inline const WorkingRangeMap & getWorkingRangeMap() const {
         return workingRangeMap;
     }
 
+    inline units::Volume getMinCapacity() const {
+        return minCapacity;
+    }
+
+    inline void setMinCapacity(units::Volume minCapacity) {
+        this->minCapacity = minCapacity;
+    }
+
+
 protected:
     std::string containerName;
 
-    unsigned int arrivingConnections;
-    unsigned int leavingConnections;
+    unsigned int numberConnections;
 
     FunctionsBitSet neccesaryFunctionsMask;
     ContainerNode::ContainerType type;
     WorkingRangeMap workingRangeMap;
+
+    units::Volume minCapacity;
 
     bool areWorkingRangeMapsCompatible(const WorkingRangeMap & othermap) const;
 };

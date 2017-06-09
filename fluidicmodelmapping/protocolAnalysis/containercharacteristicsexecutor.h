@@ -166,6 +166,8 @@ protected:
     std::vector<MachineFlowStringAdapter::FlowsVector> flowsInTime;
 
     void analyzeFlowInTime(const MachineFlowStringAdapter::FlowsVector & flows) throw(std::invalid_argument);
+    void addFlowsInTime(const MachineFlowStringAdapter::FlowsVector & flows) throw(std::invalid_argument);
+
     ContainerCharacteristics & getContainerCharacteristics(const std::string & sourceId);
     WorkingRangeManager & getContainerWorkingRange(const std::string & sourceId);
 };

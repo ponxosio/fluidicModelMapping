@@ -15,7 +15,7 @@ AStarSearch::~AStarSearch() {
 
 }
 
-bool AStarSearch::startSearch() {
+bool AStarSearch::startSearch(std::string & errorMsg) {
     bool solutionFinded = false;
 
     std::vector<int> mappedContainers(virtualContainerVector.size(), -1);
@@ -28,24 +28,32 @@ bool AStarSearch::startSearch() {
 
         if (node2process.isSolutionCandidate()) {
             RelationTable solution = translateSolution(node2process.getMappedContainers());
-            if (solutionFinded = SolutionCheck::isSolution(fluidicModelPtr, solution, flowsInTime)) {
+            if (solutionFinded = SolutionCheck::isSolution(fluidicModelPtr, solution, flowsInTime, errorMsg)) {
                 relationsVector.push_back(solution);
+                errorMsg = "SUCCESSFUL!";
             }
         } else {
-            expandNode(node2process);
+            expandNode(node2process, errorMsg);
         }
     }
     return solutionFinded;
 }
 
-void AStarSearch::expandNode(const SearchNode & node) {
+void AStarSearch::expandNode(const SearchNode & node, std::string & errorMsg) {
     int lastMappedContainer = node.getLastMappedContainer();
-    for(int compatibleNode : node.getCompatibleNextContainer()) {
-        std::vector<int> mappedContainersCopy(node.getMappedContainers());
-        mappedContainersCopy[lastMappedContainer + 1] = compatibleNode;
+    const std::vector<int> & compatibleContainers = node.getCompatibleNextContainer();
 
-        SearchNode newNode(lastMappedContainer + 1, mappedContainersCopy, heuristicPtr);
-        nodesHeap.push(newNode);
+    if (!compatibleContainers.empty()) {
+        for(int compatibleNode : compatibleContainers) {
+            std::vector<int> mappedContainersCopy(node.getMappedContainers());
+            mappedContainersCopy[lastMappedContainer + 1] = compatibleNode;
+
+            SearchNode newNode(lastMappedContainer + 1, mappedContainersCopy, heuristicPtr);
+            nodesHeap.push(newNode);
+        }
+    } else {
+        const ContainerCharacteristics & vc = virtualContainerVector[lastMappedContainer];
+        errorMsg = "Contaniner: " + vc.getName() + " has no compatible node in the machine.";
     }
 }
 

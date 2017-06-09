@@ -26,7 +26,7 @@ public:
                 const std::vector<MachineFlowStringAdapter::FlowsVector> & flowsInTime);
     virtual ~AStarSearch();
 
-    virtual bool startSearch();
+    virtual bool startSearch(std::string & errorMsg);
 
 protected:
     typedef std::priority_queue<SearchNode, std::vector<SearchNode>, SearchNode::SearchNodeCompareFunct> SearchNodeHeap;
@@ -39,7 +39,7 @@ protected:
     SearchNodeHeap nodesHeap;
 
     RelationTable translateSolution(const std::vector<int> & mappedNodes);
-    void expandNode(const SearchNode & node);
+    void expandNode(const SearchNode & node, std::string & errorMsg);
 
 };
 

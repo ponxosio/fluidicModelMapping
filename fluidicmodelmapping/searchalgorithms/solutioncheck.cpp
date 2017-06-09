@@ -2,12 +2,16 @@
 
 bool SolutionCheck::isSolution(std::shared_ptr<FluidicMachineModel> fluidicModel,
                                const SearchInterface::RelationTable & mappedContainers,
-                               const std::vector<MachineFlowStringAdapter::FlowsVector> & flowsInTime)
+                               const std::vector<MachineFlowStringAdapter::FlowsVector> & flowsInTime,
+                               std::string & errorMsg)
 {
     bool solution = true;
     for(auto it = flowsInTime.begin(); solution && it != flowsInTime.end(); ++it) {
         MachineFlow::FlowsVector machineFlows = translateFlows(*it, mappedContainers);
         solution = fluidicModel->checkFlows(machineFlows);
+    }
+    if (!solution) {
+        errorMsg = "Impossible to mantain flows: " + MachineFlowStringAdapter::flowsVectorToString(flowsInTime);
     }
     return solution;
 }

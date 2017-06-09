@@ -16,13 +16,16 @@
 #include "fluidicmodelmapping/protocolAnalysis/analysisexecutor.h"
 #include "fluidicmodelmapping/searchalgorithms/astarsearch.h"
 
-class FluidicModelMapping : public MappingInterface
+#include "fluidicmodelmapping/fluidicmodelmapping_global.h"
+
+class FLUIDICMODELMAPPINGSHARED_EXPORT FluidicModelMapping : public MappingInterface
 {
 public:
     FluidicModelMapping(std::shared_ptr<FluidicMachineModel> model);
     virtual ~FluidicModelMapping();
 
-    virtual bool areCompatible(std::shared_ptr<ProtocolSimulatorInterface> simulator) throw(std::invalid_argument);
+    virtual bool findRelation(std::shared_ptr<ProtocolSimulatorInterface> simulator,
+                              std::string & errorMsg) throw(std::invalid_argument);
     virtual int getMappedComponent(const string &virtualContainer) throw(std::invalid_argument);
 
 protected:

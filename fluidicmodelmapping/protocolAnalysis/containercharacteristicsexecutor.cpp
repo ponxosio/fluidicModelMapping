@@ -118,7 +118,10 @@ void ContainerCharacteristicsExecutor::loadContainer(
         const std::string & sourceId,
         units::Volume initialVolume)
 {
-    getContainerCharacteristics(sourceId);
+    ContainerCharacteristics & cc = getContainerCharacteristics(sourceId);
+    if (cc.getMinCapacity() < initialVolume) {
+        cc.setMinCapacity(initialVolume);
+    }
 }
 
 void ContainerCharacteristicsExecutor::startMeasureOD(
@@ -270,11 +273,25 @@ units::Time ContainerCharacteristicsExecutor::timeStep() {
         const MachineFlowStringAdapter::FlowsVector & flowsVector = machineFlow->updateFlows();
         if (!flowsVector.empty()) {
             analyzeFlowInTime(flowsVector);
-            flowsInTime.push_back(flowsVector);
+            addFlowsInTime(flowsVector);
         }
         flowsNeedChecking = false;
     }
     return timeSlice;
+}
+
+void ContainerCharacteristicsExecutor::addFlowsInTime(const MachineFlowStringAdapter::FlowsVector & flows)
+    throw(std::invalid_argument)
+{
+    bool finded = false;
+    for(auto it = flowsInTime.begin(); !finded && it != flowsInTime.end(); ++it) {
+        const MachineFlowStringAdapter::FlowsVector & actualFlow = *it;
+        finded = MachineFlowStringAdapter::flowsVectorEquals(flows, actualFlow);
+    }
+
+    if (!finded) {
+        flowsInTime.push_back(flows);
+    }
 }
 
 void ContainerCharacteristicsExecutor::analyzeFlowInTime(const MachineFlowStringAdapter::FlowsVector & flows) throw(std::invalid_argument) {

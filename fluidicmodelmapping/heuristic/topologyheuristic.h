@@ -32,6 +32,7 @@ protected:
 
     void analyzeMachine(std::shared_ptr<const MachineGraph> machinePtr);
     ContainerCharacteristics analyzeContainer(const std::shared_ptr<ContainerNode> & containerPtr);
+    int countContainersConnected(int id, std::shared_ptr<const MachineGraph> machinePtr);
 
     int getContainerSimilarityIndex(const ContainerCharacteristics & container1, const ContainerCharacteristics & container2);
 

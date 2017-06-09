@@ -8,18 +8,26 @@ FluidicModelMapping::FluidicModelMapping(std::shared_ptr<FluidicMachineModel> mo
 FluidicModelMapping::~FluidicModelMapping() {
 }
 
-bool FluidicModelMapping::areCompatible(std::shared_ptr<ProtocolSimulatorInterface> simulator)
-throw(std::invalid_argument)
+bool FluidicModelMapping::findRelation(
+        std::shared_ptr<ProtocolSimulatorInterface> simulator,
+        std::string & errorMsg)
+    throw(std::invalid_argument)
 {
     AnalysisExecutor protocolAnalysis(simulator, model->getDefaultRate() * model->getDefaultRateUnits());
 
     checkForCompatiblePumps(protocolAnalysis.getFlowsInTime());
 
-    std::shared_ptr<HeuristicInterface> heuristic =
-            std::make_shared<TopologyHeuristic>(model->getMachineGraph(), protocolAnalysis.getVCVector());
+    std::vector<ContainerCharacteristics> vcVector = protocolAnalysis.getVCVector();
 
-    AStarSearch search(model, heuristic, protocolAnalysis.getVCVector(), protocolAnalysis.getFlowsInTime());
-    bool finded = search.startSearch();
+    std::sort(vcVector.begin(),
+              vcVector.end(),
+              ContainerCharacteristics::ContainerCharacteristicsComparator());
+
+    std::shared_ptr<HeuristicInterface> heuristic =
+            std::make_shared<TopologyHeuristic>(model->getMachineGraph(), vcVector);
+
+    AStarSearch search(model, heuristic, vcVector, protocolAnalysis.getFlowsInTime());
+    bool finded = search.startSearch(errorMsg);
 
     if (finded) {
         relation.clear();

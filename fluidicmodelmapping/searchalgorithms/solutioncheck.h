@@ -15,7 +15,8 @@ class SolutionCheck
 public:
     static bool isSolution(std::shared_ptr<FluidicMachineModel> fluidicModel,
                            const SearchInterface::RelationTable & mappedContainers,
-                           const std::vector<MachineFlowStringAdapter::FlowsVector> & flowsInTime);
+                           const std::vector<MachineFlowStringAdapter::FlowsVector> & flowsInTime,
+                           std::string & errorMsg);
 
 protected:
     static MachineFlow::FlowsVector translateFlows(const MachineFlowStringAdapter::FlowsVector & flowsInTime,

@@ -13,7 +13,7 @@ DeepSearch::~DeepSearch() {
 
 }
 
-bool DeepSearch::startSearch() {
+bool DeepSearch::startSearch(std::string & errorMsg) {
     relationsVector.clear();
     clearRelationTable();
     startSearch_recursive(0);

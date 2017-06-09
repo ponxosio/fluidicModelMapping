@@ -4,8 +4,8 @@ ContainerCharacteristics::ContainerCharacteristics() {
     containerName = "Unknow";
     this->neccesaryFunctionsMask = 0;
     this->type = ContainerNode::unknow;
-    this->arrivingConnections = 0;
-    this->leavingConnections = 0;
+    this->numberConnections = 0;
+    this->minCapacity = 0 * units::ml;
 }
 
 ContainerCharacteristics::ContainerCharacteristics(const ContainerCharacteristics & cc) :
@@ -13,9 +13,9 @@ ContainerCharacteristics::ContainerCharacteristics(const ContainerCharacteristic
     neccesaryFunctionsMask(cc.neccesaryFunctionsMask),
     workingRangeMap(cc.workingRangeMap)
 {
-    this->arrivingConnections = cc.arrivingConnections;
-    this->leavingConnections = cc.leavingConnections;
+    this->numberConnections = cc.numberConnections;
     this->type = cc.type;
+    this->minCapacity = cc.minCapacity;
 }
 
 ContainerCharacteristics::ContainerCharacteristics(const std::string & virtualContainerName) :
@@ -23,8 +23,8 @@ ContainerCharacteristics::ContainerCharacteristics(const std::string & virtualCo
 {
     this->neccesaryFunctionsMask = 0;
     this->type = ContainerNode::unknow;
-    this->arrivingConnections = 0;
-    this->leavingConnections = 0;
+    this->numberConnections = 0;
+    this->minCapacity = 0 * units::ml;
 }
 
 ContainerCharacteristics::~ContainerCharacteristics() {
@@ -32,10 +32,14 @@ ContainerCharacteristics::~ContainerCharacteristics() {
 }
 
 bool ContainerCharacteristics::compatible(const ContainerCharacteristics & containerChar) const {
-    return (this->type == containerChar.type) &&
-           ((this->neccesaryFunctionsMask & containerChar.neccesaryFunctionsMask) == containerChar.neccesaryFunctionsMask) &&
-           (areWorkingRangeMapsCompatible(containerChar.workingRangeMap)) &&
-           ((this->arrivingConnections + this->leavingConnections) >= (containerChar.arrivingConnections + containerChar.leavingConnections));
+    bool compatible1 = (this->type == containerChar.type) &&
+                       (this->minCapacity >= containerChar.minCapacity) &&
+                       (this->numberConnections >= containerChar.numberConnections);
+
+    bool compatible2 = areWorkingRangeMapsCompatible(containerChar.workingRangeMap);
+    bool compatible3 = (this->neccesaryFunctionsMask & containerChar.neccesaryFunctionsMask) == containerChar.neccesaryFunctionsMask;
+
+    return compatible1 && compatible2 && compatible3;
 }
 
 void ContainerCharacteristics::addFunctions(Function::OperationType op) {
@@ -60,13 +64,13 @@ void ContainerCharacteristics::addWorkingRange(Function::OperationType op, const
 
 bool ContainerCharacteristics::areWorkingRangeMapsCompatible(const WorkingRangeMap & othermap) const {
     bool compatible = true;
-    for(auto it = workingRangeMap.begin(); (compatible && (it != workingRangeMap.end())); ++it) {
+    for(auto it = othermap.begin(); (compatible && (it != othermap.end())); ++it) {
         Function::OperationType actualType = it->first;
 
-        auto finded = othermap.find(actualType);
-        if (finded != othermap.end()) {
-            const std::shared_ptr<const ComparableRangeInterface> myWorkingRange = it->second;
-            const std::shared_ptr<const ComparableRangeInterface> otherWorkingRange = finded->second;
+        auto finded = workingRangeMap.find(actualType);
+        if (finded != workingRangeMap.end()) {
+            const std::shared_ptr<const ComparableRangeInterface> myWorkingRange = finded->second;
+            const std::shared_ptr<const ComparableRangeInterface> otherWorkingRange = it->second;
             compatible = myWorkingRange->compatible(otherWorkingRange);
         } else {
             compatible = false;

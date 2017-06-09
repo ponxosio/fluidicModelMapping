@@ -22,7 +22,7 @@ public:
                const std::vector<MachineFlow::FlowsVector> & flowsInTime);
     virtual ~DeepSearch();
 
-    virtual bool startSearch();
+    virtual bool startSearch(std::string & errorMsg);
 
 protected:
     FluidicMachineModel* modelPtr;

@@ -54,8 +54,7 @@ void AnalysisExecutor::addArrivingLeavingConnections(
         int arrivingEdges = graph.getArrivingEdges(id)->size();
         int leavingEdges = graph.getLeavingEdges(id)->size();
 
-        container.setArrivingConnections(arrivingEdges);
-        container.setLeavingConnections(leavingEdges);
+        container.setNumberConnections(arrivingEdges + leavingEdges);
 
         if ((arrivingEdges == 0) || (leavingEdges == 0)) {
             container.setType(ContainerNode::open);

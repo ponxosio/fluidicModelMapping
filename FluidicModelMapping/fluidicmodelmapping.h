@@ -28,6 +28,8 @@ public:
                               std::string & errorMsg) throw(std::invalid_argument);
     virtual int getMappedComponent(const string &virtualContainer) throw(std::invalid_argument);
 
+    virtual std::vector<int> getAllContainersUseInProtocol();
+
 protected:
     SearchInterface::RelationTable relation;
     std::shared_ptr<FluidicMachineModel> model;

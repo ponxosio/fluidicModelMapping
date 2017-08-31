@@ -8,7 +8,9 @@ bool SolutionCheck::isSolution(std::shared_ptr<FluidicMachineModel> fluidicModel
     bool solution = true;
     for(auto it = flowsInTime.begin(); solution && it != flowsInTime.end(); ++it) {
         MachineFlow::FlowsVector machineFlows = translateFlows(*it, mappedContainers);
-        solution = fluidicModel->checkFlows(machineFlows);
+
+        std::vector<int> containersUsedInProtocol = Utils::getAllValuesFromMap<std::string, int>(mappedContainers);
+        solution = fluidicModel->checkFlows(containersUsedInProtocol, machineFlows);
     }
     if (!solution) {
         errorMsg = "Impossible to mantain flows: " + MachineFlowStringAdapter::flowsVectorToString(flowsInTime);

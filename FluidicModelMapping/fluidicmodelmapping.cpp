@@ -47,6 +47,10 @@ int FluidicModelMapping::getMappedComponent(const string & virtualContainer) thr
     }
 }
 
+std::vector<int> FluidicModelMapping::getAllContainersUseInProtocol() {
+    return Utils::getAllValuesFromMap<string, int>(relation);
+}
+
 void FluidicModelMapping::checkForCompatiblePumps(const std::vector<MachineFlowStringAdapter::FlowsVector> & flowsInTime) {
     model->clearDisabledPumps();
 

@@ -77,7 +77,7 @@ public:
                                          units::Frequency measurementFrequencyUnits);
 
     inline virtual units::Temperature getMeasureTemperature(const std::string & sourceId) {
-        return (0 * units::K);
+        return (0 * units::C);
     }
 
     virtual void startMeasureLuminiscense(const std::string & sourceId,

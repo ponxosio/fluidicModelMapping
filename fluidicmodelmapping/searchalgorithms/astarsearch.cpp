@@ -52,7 +52,7 @@ void AStarSearch::expandNode(const SearchNode & node, std::string & errorMsg) {
             nodesHeap.push(newNode);
         }
     } else {
-        const ContainerCharacteristics & vc = virtualContainerVector[lastMappedContainer];
+        const ContainerCharacteristics & vc = virtualContainerVector[lastMappedContainer + 1];
         errorMsg = "Contaniner: " + vc.getName() + " has no compatible node in the machine.";
     }
 }

@@ -32,7 +32,7 @@ ContainerCharacteristics::~ContainerCharacteristics() {
 }
 
 bool ContainerCharacteristics::compatible(const ContainerCharacteristics & containerChar) const {
-    bool compatible1 = (this->type == containerChar.type) &&
+    bool compatible1 = (containerChar.type == ContainerNode::unknow || this->type == containerChar.type) &&
                        (this->minCapacity >= containerChar.minCapacity) &&
                        (this->numberConnections >= containerChar.numberConnections);
 

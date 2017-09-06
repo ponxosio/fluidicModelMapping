@@ -272,8 +272,10 @@ units::Time ContainerCharacteristicsExecutor::timeStep() {
     if (flowsNeedChecking) {
         const MachineFlowStringAdapter::FlowsVector & flowsVector = machineFlow->updateFlows();
         if (!flowsVector.empty()) {
-            analyzeFlowInTime(flowsVector);
-            addFlowsInTime(flowsVector);
+            if (!checkFlowAlreadyDone(flowsVector)) {
+                analyzeFlowInTime(flowsVector);
+                flowsInTime.push_back(flowsVector);
+            }
         }
         flowsNeedChecking = false;
     }
@@ -292,6 +294,15 @@ void ContainerCharacteristicsExecutor::addFlowsInTime(const MachineFlowStringAda
     if (!finded) {
         flowsInTime.push_back(flows);
     }
+}
+
+bool ContainerCharacteristicsExecutor::checkFlowAlreadyDone(const MachineFlowStringAdapter::FlowsVector & flows) throw(std::invalid_argument) {
+    bool finded = false;
+    for(auto it = flowsInTime.begin(); !finded && it != flowsInTime.end(); ++it) {
+        const MachineFlowStringAdapter::FlowsVector & actualFlow = *it;
+        finded = MachineFlowStringAdapter::flowsVectorEquals(flows, actualFlow);
+    }
+    return finded;
 }
 
 void ContainerCharacteristicsExecutor::analyzeFlowInTime(const MachineFlowStringAdapter::FlowsVector & flows) throw(std::invalid_argument) {
